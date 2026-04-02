@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rewards Catalog – EcoQuest</title>
+  <meta name="description" content="Spend your EcoQuest XP on exclusive rewards.">
+  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo"><div class="nav-logo-icon">🌿</div>Eco<span>Quest</span></a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">🏠 Home</a>
+      <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+      <a href="quizzes.html" class="nav-link">📝 Quizzes</a>
+      <a href="missions.html" class="nav-link">🌍 Missions</a>
+      <a href="leaderboard.html" class="nav-link">🏆 Leaderboard</a>
+      <a href="badges.html" class="nav-link">🏅 Badges</a>
+      <a href="recommendations.html" class="nav-link">🤖 AI Tips</a>
+      <a href="game.html" class="nav-link" style="color:var(--clr-gold);border:1px solid rgba(245,158,11,0.25);border-radius:var(--radius-full);padding:6px 14px">🎮 Game</a>
+    </div>
+    <div class="nav-right">
+      <div class="nav-xp-area">
+        <div class="nav-xp-label"><span id="nav-xp-val">720 XP</span><span id="nav-xp-next">to Tree</span></div>
+        <div class="nav-xp-bar"><div class="nav-xp-fill" id="nav-xp-fill" style="width:40%"></div></div>
+      </div>
+      <div class="nav-level-badge"><span id="nav-level-name">🌿 Sprout</span></div>
+      <div class="nav-avatar">EW</div>
+      <button onclick="Auth.logout()" title="Logout" style="background:transparent;border:1px solid var(--border-subtle);border-radius:var(--radius-full);padding:6px 12px;color:var(--text-muted);font-size:0.75rem;cursor:pointer;transition:all 0.2s;font-family:var(--font-sans)">⏻ Logout</button>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrapper">
+  <div class="container">
+    <div class="page-header text-center" style="margin-bottom:48px">
+      <div class="page-title">🛍️ XP Rewards Catalog</div>
+      <p class="page-subtitle" style="margin-top:8px">Exchange your hard-earned XP for exclusive digital and real-world rewards.</p>
+    </div>
+
+    <!-- Catalog Grid -->
+    <div class="grid-3 gap-xl" id="catalog-grid">
+      <!-- Items generated via JS -->
+    </div>
+
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
+<script>Auth.guard();</script>
+
+<script>
+const STORE_ITEMS = [
+  { id: '1', icon: '🎨', title: 'Golden Leaf Avatar Frame', cost: 1000, desc: 'Upgrade your profile with an exclusive golden frame.', type: 'digital' },
+  { id: '2', icon: '🌙', title: 'Dark Theme Unlock', cost: 1500, desc: 'Unlock the stylish Midnight Eco theme for your dashboard.', type: 'digital' },
+  { id: '3', icon: '✨', title: 'Animated Profile Banner', cost: 2000, desc: 'Add a beautiful animated nature background to your profile.', type: 'digital' },
+  { id: '4', icon: '📜', title: 'Digital Eco-Certificate', cost: 2500, desc: 'A personalized PDF certificate highlighting your environmental achievements.', type: 'digital' },
+  { id: '5', icon: '🌳', title: 'Plant a Real Tree', cost: 5000, desc: 'We will donate to our NGO partner to plant one fully grown tree in your name.', type: 'real' },
+  { id: '6', icon: '⚡', title: 'Earth Guardian Title', cost: 10000, desc: 'The ultimate flex. Display the exclusive Earth Guardian title next to your name.', type: 'digital' }
+];
+
+function renderCatalog() {
+  const container = document.getElementById('catalog-grid');
+  const state = EQ.getState();
+  const purchased = state.purchasedItems || [];
+
+  container.innerHTML = STORE_ITEMS.map((item, i) => {
+    const isOwned = purchased.includes(item.title);
+    const canAfford = state.totalXP >= item.cost;
+    
+    // Style button based on state
+    let btnHTML = '';
+    if (isOwned) {
+      btnHTML = `<button class="btn" style="width:100%; background:var(--clr-primary-dim); color:var(--clr-primary); border-color:var(--clr-primary);" disabled>🎉 Owned</button>`;
+    } else {
+      btnHTML = `<button class="btn btn-primary" style="width:100%; ${canAfford ? '' : 'filter:grayscale(1); opacity:0.6;'}" onclick="buyItem('${item.id}')">💳 Buy for ${item.cost.toLocaleString()} XP</button>`;
+    }
+
+    return `
+      <div class="card anim-fade-up" style="animation-delay:${i * 0.1}s; display:flex; flex-direction:column; justify-content:space-between; padding:24px; text-align:center; position:relative; overflow:hidden;">
+        ${item.type === 'real' ? '<div style="position:absolute; top:12px; right:-28px; background:var(--clr-accent); color:#000; font-size:0.75rem; font-weight:700; padding:4px 32px; transform:rotate(45deg);">REAL WORLD</div>' : ''}
+        
+        <div>
+          <div style="font-size:3.5rem; margin-bottom:16px; filter:drop-shadow(0 0 16px rgba(16,185,129,0.3));">${item.icon}</div>
+          <h3 style="font-family:var(--font-display); font-size:1.25rem; margin-bottom:8px;">${item.title}</h3>
+          <p style="color:var(--text-secondary); font-size:0.9rem; line-height:1.5;">${item.desc}</p>
+        </div>
+        
+        <div style="margin-top:24px; border-top:1px solid var(--border-subtle); padding-top:20px;">
+          ${btnHTML}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+window.buyItem = function(id) {
+  const item = STORE_ITEMS.find(x => x.id === id);
+  if (!item) return;
+
+  const success = EQ.spendXP(item.cost, item.title);
+  if (success) {
+    // Re-render instantly to show "Owned"
+    renderCatalog();
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderCatalog();
+  
+  // Optional: keep strictly in sync if another tab updates XP
+  setInterval(() => {
+    const s = EQ.getState();
+    const currentXP = parseInt(document.getElementById('nav-xp-val').innerText);
+    if (!isNaN(currentXP) && s.totalXP !== currentXP) {
+      renderCatalog();
+    }
+  }, 2000);
+});
+</script>
+</body>
+</html>

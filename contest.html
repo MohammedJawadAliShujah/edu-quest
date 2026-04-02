@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Essay Contest – EcoQuest</title>
+  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="components.css">
+  <style>
+    .editor-box {
+      width: 100%;
+      min-height: 250px;
+      padding: 16px;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      color: var(--light-text);
+      font-family: var(--font-sans);
+      font-size: 1rem;
+      line-height: 1.6;
+      resize: vertical;
+      transition: border-color 0.3s;
+    }
+    .editor-box:focus {
+      outline: none;
+      border-color: var(--clr-primary);
+      box-shadow: 0 0 0 2px rgba(16,185,129,0.15);
+    }
+    .score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(59,130,246,0.2));
+      border: 2px solid var(--clr-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--clr-primary);
+      margin: 0 auto 20px auto;
+      box-shadow: 0 0 30px rgba(16,185,129,0.2);
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 4px solid rgba(255,255,255,0.1);
+      border-top-color: var(--clr-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo"><div class="nav-logo-icon">🌿</div>Eco<span>Quest</span></a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">🏠 Home</a>
+      <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+      <a href="quizzes.html" class="nav-link">📝 Quizzes</a>
+      <a href="missions.html" class="nav-link">🌍 Missions</a>
+      <a href="leaderboard.html" class="nav-link">🏆 Leaderboard</a>
+      <a href="badges.html" class="nav-link">🏅 Badges</a>
+      <a href="recommendations.html" class="nav-link">🤖 AI Tips</a>
+      <a href="game.html" class="nav-link" style="color:var(--clr-gold);border:1px solid rgba(245,158,11,0.25);border-radius:var(--radius-full);padding:6px 14px">🎮 Game</a>
+    </div>
+    <div class="nav-right">
+      <div class="nav-xp-area">
+        <div class="nav-xp-label"><span id="nav-xp-val">720 XP</span><span id="nav-xp-next">to Tree</span></div>
+        <div class="nav-xp-bar"><div class="nav-xp-fill" id="nav-xp-fill" style="width:40%"></div></div>
+      </div>
+      <div class="nav-level-badge"><span id="nav-level-name">🌿 Sprout</span></div>
+    </div>
+  </div>
+</nav>
+
+<div class="page-wrapper">
+  <div class="container" style="max-width:800px; padding-top:40px;">
+
+    <!-- VIEW: LOADING -->
+    <div id="view-loading" class="card" style="text-align:center; padding:60px 20px;">
+      <div class="spinner"></div>
+      <h2 id="loading-text" style="font-family:var(--font-display); font-weight:700;">EcoAI is generating a question...</h2>
+      <p style="color:var(--text-muted); margin-top:8px;">Powered by Groq API (gpt-oss-20b)</p>
+    </div>
+
+    <!-- VIEW: WRITING -->
+    <div id="view-writing" class="card anim-fade-up" style="display:none; padding:30px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+        <h1 style="font-family:var(--font-display); font-size:2rem; margin:0;">AI Essay Contest ✍️</h1>
+        <div class="badge badge-purple">✨ Groq Judged</div>
+      </div>
+      
+      <div style="background:var(--bg-elevated); padding:20px; border-radius:var(--radius-md); border-left:4px solid var(--clr-primary); margin-bottom:24px;">
+        <div style="font-size:0.875rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.05em; font-weight:700; margin-bottom:8px;">Your Prompt:</div>
+        <div id="qt-text" style="font-size:1.2rem; font-weight:500; line-height:1.5;"></div>
+      </div>
+
+      <textarea id="essay-input" class="editor-box" placeholder="Write your essay here... Be specific, use facts, and clearly explain your viewpoint." spellcheck="false" data-gramm="false"></textarea>
+      
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+        <p style="color:var(--text-muted); font-size:0.875rem;">Essays are graded strictly out of 10 points. 1 Pt = 50 XP.</p>
+        <button id="btn-submit" class="btn btn-primary" onclick="submitEssay()">Submit Essay for Judging</button>
+      </div>
+    </div>
+
+    <!-- VIEW: RESULT -->
+    <div id="view-result" class="card anim-fade-up" style="display:none; text-align:center; padding:50px 30px;">
+      <div class="score-circle" id="res-score">0/10</div>
+      
+      <h2 style="font-family:var(--font-display); font-size:2rem; margin-bottom:8px;">Evaluation Complete!</h2>
+      <div id="res-xp" style="display:inline-block; font-size:1.25rem; font-weight:700; color:var(--clr-gold); padding:8px 24px; background:rgba(245,158,11,0.1); border-radius:var(--radius-full); margin-bottom:24px;">+0 XP</div>
+      
+      <div style="background:var(--bg-elevated); padding:24px; border-radius:var(--radius-md); text-align:left; margin-bottom:32px;">
+        <div style="font-weight:700; margin-bottom:12px; color:var(--clr-primary);">🤖 AI Feedback:</div>
+        <div id="res-feedback" style="line-height:1.6; color:var(--text-secondary);"></div>
+      </div>
+
+      <a href="leaderboard.html" class="btn btn-primary" style="padding:14px 32px; font-size:1.1rem;">🏆 View Leaderboard Update</a>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
+<script>Auth.guard();</script>
+
+<script>
+const GROQ_API_KEY = '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';
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
+const GROQ_MODEL   = 'llama3-8b-8192';
+
+let currentQuestion = "";
+
+async function generateQuestion() {
+  document.getElementById('view-loading').style.display = 'block';
+  document.getElementById('view-writing').style.display = 'none';
+  document.getElementById('view-result').style.display = 'none';
+
+  try {
+    // Generate a uniquely random seed to ensure the LLM never gets stuck in a repetitive loop
+    const randomSeed = Math.random().toString(36).substring(2, 10) + Date.now().toString();
+
+    const res = await fetch(GROQ_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        messages: [{
+          role: 'system',
+          content: 'You are a highly creative environmental science teacher. Generate exactly ONE brief, engaging, and unique essay question for beginners. The topic can be ANYTHING related to the environment (e.g., sustainability, wildlife, random eco-habits, futuristic green tech, pollution, oceans). Make it a completely fresh idea. Return ONLY the question string, without any quotation marks or extra text.'
+        }, {
+          role: 'user',
+          content: `Generate a new question now. Seed: ${randomSeed}`
+        }],
+        max_tokens: 150,
+        temperature: 0.98
+      })
+    });
+    
+    if (!res.ok) throw new Error('API Error');
+    const data = await res.json();
+    currentQuestion = data.choices[0].message.content.trim().replace(/^"|"$/g, '');
+    
+    document.getElementById('qt-text').textContent = currentQuestion;
+    document.getElementById('view-loading').style.display = 'none';
+    document.getElementById('view-writing').style.display = 'block';
+  } catch (e) {
+    console.warn(e);
+    // Fallback if API fails
+    currentQuestion = "What are three easy things you can do at home every day to save water or reduce waste, and why are they important?";
+    document.getElementById('qt-text').textContent = currentQuestion;
+    document.getElementById('view-loading').style.display = 'none';
+    document.getElementById('view-writing').style.display = 'block';
+  }
+}
+
+async function submitEssay() {
+  const essay = document.getElementById('essay-input').value.trim();
+  if (essay.length < 50) {
+    EQ.showToast('error', 'Essay Too Short', 'Please write a more detailed response to be evaluated.');
+    return;
+  }
+  
+  document.getElementById('btn-submit').disabled = true;
+  document.getElementById('view-writing').style.display = 'none';
+  document.getElementById('loading-text').textContent = "EcoAI is grading your essay...\nTaking into account facts, relevance, and clarity.";
+  document.getElementById('view-loading').style.display = 'block';
+
+  try {
+    const res = await fetch(GROQ_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        messages: [{
+          role: 'system',
+          content: 'You are an environmental science professor grading a student essay. Grade it strictly out of 10 point scale based on relevance, environmental knowledge, and clarity. Return ONLY a valid JSON object with EXACTLY two keys: "score" (a number between 0 and 10) and "feedback" (a 2-3 sentence constructive review). Do not include markdown or conversational text.'
+        }, {
+          role: 'user',
+          content: `Question: ${currentQuestion}\n\nStudent Essay:\n${essay}`
+        }],
+        max_tokens: 300,
+        temperature: 0.4
+      })
+    });
+    
+    if (!res.ok) throw new Error('API Error');
+    const data = await res.json();
+    let text = data.choices[0].message.content.trim();
+    text = text.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
+    
+    // Extract JSON in case of extra text
+    const match = text.match(/\{[\s\S]*\}/);
+    if(match) text = match[0];
+    
+    const result = JSON.parse(text);
+    const score = parseFloat(result.score) || 0;
+    const finalScore = Math.min(Math.max(score, 0), 10);
+    
+    document.getElementById('view-loading').style.display = 'none';
+    document.getElementById('view-result').style.display = 'block';
+    
+    document.getElementById('res-score').textContent = `${finalScore}/10`;
+    document.getElementById('res-feedback').textContent = result.feedback || "Good effort! Try to include more specific data points next time.";
+    
+    const xpEarned = Math.round(finalScore * 50);
+    document.getElementById('res-xp').textContent = `+${xpEarned} XP`;
+    
+    if (xpEarned > 0) {
+      setTimeout(() => {
+        EQ.awardXP(xpEarned, `AI Essay Score: ${finalScore}/10 🎓`);
+      }, 500);
+    }
+  } catch(e) {
+    console.error(e);
+    EQ.showToast('error', 'Evaluation Failed', 'The AI engine encountered an error. Please try again later.');
+    document.getElementById('btn-submit').disabled = false;
+    document.getElementById('view-writing').style.display = 'block';
+    document.getElementById('view-loading').style.display = 'none';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  generateQuestion();
+});
+</script>
+</body>
+</html>

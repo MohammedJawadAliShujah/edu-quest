@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard – EcoQuest</title>
+  <meta name="description"
+    content="Your personal EcoQuest dashboard — track XP, CO₂ saved, missions, and weekly progress.">
+  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="components.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+
+  <style>
+    /* Dropdown CSS for Desktop Nav */
+    .nav-dropdown {
+      position: relative;
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
+
+    .nav-dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: var(--bg-card);
+      min-width: 180px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      z-index: 100;
+      flex-direction: column;
+      padding: 8px 0;
+      animation: fade-down 0.2s ease;
+    }
+
+    .nav-dropdown:hover .nav-dropdown-content {
+      display: flex;
+    }
+
+    .nav-dropdown-item {
+      color: var(--text-secondary);
+      padding: 10px 16px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .nav-dropdown-item:hover {
+      background-color: var(--bg-elevated);
+      color: var(--clr-primary);
+      padding-left: 20px;
+    }
+
+    @keyframes fade-down {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav id="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon">🌿</div>Eco<span>Quest</span>
+      </a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link"><span class="nav-icon">🏠</span> Home</a>
+      <a href="dashboard.html" class="nav-link active"><span class="nav-icon">📊</span> Dashboard</a>
+      
+      <div class="nav-dropdown">
+        <button class="nav-link" style="background:transparent;border:none;cursor:pointer;font-family:inherit;font-size:inherit;display:flex;align-items:center;padding:12px;color:var(--text-primary)">
+          <span class="nav-icon">🌟</span> Activities <span style="font-size:0.6em;margin-left:6px;opacity:0.7">▼</span>
+        </button>
+        <div class="nav-dropdown-content">
+          <a href="quizzes.html" class="nav-dropdown-item">📝 Quizzes</a>
+          <a href="missions.html" class="nav-dropdown-item">🌍 Missions</a>
+          <a href="catalog.html" class="nav-dropdown-item">🛒 Rewards Catalog</a>
+          <a href="leaderboard.html" class="nav-dropdown-item">🏆 Leaderboard</a>
+          <a href="badges.html" class="nav-dropdown-item">🏅 Badges</a>
+          <a href="recommendations.html" class="nav-dropdown-item">🤖 AI Tips</a>
+        </div>
+      </div>
+      
+      <a href="game.html" class="nav-link" style="color:var(--clr-gold);border:1px solid rgba(245,158,11,0.25);border-radius:var(--radius-full);padding:6px 14px"><span class="nav-icon">🎮</span> Game</a>
+    </div>
+    <div class="nav-right">
+        <div class="nav-xp-area">
+          <div class="nav-xp-label"><span id="nav-xp-val">720 XP</span><span id="nav-xp-next">to Tree</span></div>
+          <div class="nav-xp-bar">
+            <div class="nav-xp-fill" id="nav-xp-fill" style="width:40%"></div>
+          </div>
+        </div>
+        <div class="nav-level-badge"><span id="nav-level-name">🌿 Sprout</span></div>
+        <div class="nav-avatar">EW</div>
+        <button onclick="Auth.logout()" title="Logout"
+          style="background:transparent;border:1px solid var(--border-subtle);border-radius:var(--radius-full);padding:6px 12px;color:var(--text-muted);font-size:0.75rem;cursor:pointer;transition:all 0.2s;font-family:var(--font-sans)"
+          onmouseover="this.style.color='var(--clr-danger)';this.style.borderColor='var(--clr-danger)'"
+          onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border-subtle)'">⏻
+          Logout</button>
+      </div>
+      <button class="nav-hamburger" id="nav-hamburger"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+  <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon">🌿</div>Eco<span style="color:var(--clr-primary)">Quest</span>
+    </a>
+  <div class="mobile-nav-links">
+    <a href="index.html" class="mobile-nav-link">🏠 Home</a>
+    <a href="dashboard.html" class="mobile-nav-link active">📊 Dashboard</a>
+    <a href="quizzes.html" class="mobile-nav-link">📝 Quizzes</a>
+    <a href="catalog.html" class="mobile-nav-link">🛒 Catalog</a>
+    <a href="missions.html" class="mobile-nav-link">🌍 Missions</a>
+    <a href="leaderboard.html" class="mobile-nav-link">🏆 Leaderboard</a>
+    <a href="badges.html" class="mobile-nav-link">🏅 Badges</a>
+    <a href="recommendations.html" class="mobile-nav-link">🤖 AI Tips</a>
+    <a href="game.html" class="mobile-nav-link" style="color:var(--clr-gold)">🎮 Game</a>
+  </div>
+</div>
+
+  <div class="page-wrapper">
+    <div class="container">
+
+      <!-- Page Header -->
+      <div class="page-header flex justify-between items-center flex-wrap gap-md">
+        <div>
+          <div class="page-title">Welcome back, <span class="gradient-text" id="user-name">EcoWarrior</span> 👋</div>
+          <div class="page-subtitle">Here's your environmental impact summary</div>
+        </div>
+        <div class="flex gap-md items-center">
+          <div class="badge badge-green">🔥 <span id="streak-count">3</span>-day streak</div>
+          <a href="quizzes.html" class="btn btn-primary">+ Earn XP</a>
+        </div>
+      </div>
+
+      <!-- Stat Cards Row -->
+      <div class="grid-4 gap-md" style="margin-bottom:24px">
+        <div class="stat-card anim-fade-up">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-value" id="dash-xp">720</div>
+          <div class="stat-label">Total XP Earned</div>
+          <div class="stat-delta">↑ +270 this week</div>
+        </div>
+        <div class="stat-card anim-fade-up anim-delay-1">
+          <div class="stat-icon" style="background:rgba(245,158,11,0.12)">🌫️</div>
+          <div class="stat-value" id="dash-co2">7.4<span
+              style="font-size:1rem;font-weight:500;color:var(--text-secondary)">kg</span></div>
+          <div class="stat-label">CO₂ Offset</div>
+          <div class="stat-delta">↑ +1.2kg this week</div>
+        </div>
+        <div class="stat-card anim-fade-up anim-delay-2">
+          <div class="stat-icon" style="background:var(--clr-accent-dim)">🌍</div>
+          <div class="stat-value" id="dash-missions">2</div>
+          <div class="stat-label">Missions Complete</div>
+          <div class="stat-delta">↑ 1 pending review</div>
+        </div>
+        <div class="stat-card anim-fade-up anim-delay-3">
+          <div class="stat-icon" style="background:rgba(245,158,11,0.12)">🏅</div>
+          <div class="stat-value" id="dash-badges">4</div>
+          <div class="stat-label">Badges Earned</div>
+          <div class="stat-delta">↑ 3 more to unlock</div>
+        </div>
+      </div>
+
+      <!-- Main Dashboard Grid -->
+      <div class="dashboard-grid">
+
+        <!-- Left column -->
+        <div style="display:flex;flex-direction:column;gap:24px">
+
+          <!-- Weekly Activity Chart -->
+          <div class="card chart-card anim-fade-up">
+            <div class="flex justify-between items-center" style="margin-bottom:16px">
+              <div class="chart-title">📈 Weekly XP Activity</div>
+              <div class="badge badge-green">This Week</div>
+            </div>
+            <canvas id="weekly-chart" height="200"></canvas>
+          </div>
+
+          <!-- Impact Donut Row -->
+          <div class="grid-2 gap-md">
+            <div class="card chart-card anim-fade-up anim-delay-1">
+              <div class="chart-title">🌿 Contribution Breakdown</div>
+              <p style="font-size:0.875rem;color:var(--text-secondary);margin-bottom:16px;">
+                See how your eco-friendly actions are distributed across different mission categories this month. Keep a balanced variety to maximize your impact!
+              </p>
+              <canvas id="donut-chart" height="200"></canvas>
+            </div>
+            <div class="card anim-fade-up anim-delay-2" style="display:flex;flex-direction:column;gap:16px">
+              <div class="chart-title">🌱 Environmental Impact</div>
+              <div>
+                <div class="flex justify-between" style="margin-bottom:6px;font-size:0.875rem">
+                  <span>Trees Equivalent</span>
+                  <span style="font-weight:700;color:var(--clr-primary)">2 trees 🌳</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width:40%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between" style="margin-bottom:6px;font-size:0.875rem">
+                  <span>Plastic Reduced</span>
+                  <span style="font-weight:700;color:var(--clr-primary)">1.8 kg ♻️</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width:60%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between" style="margin-bottom:6px;font-size:0.875rem">
+                  <span>Energy Saved</span>
+                  <span style="font-weight:700;color:var(--clr-primary)">12 kWh ⚡</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width:35%"></div>
+                </div>
+              </div>
+              <div>
+                <div class="flex justify-between" style="margin-bottom:6px;font-size:0.875rem">
+                  <span>Water Conserved</span>
+                  <span style="font-weight:700;color:var(--clr-primary)">84 L 💧</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width:55%"></div>
+                </div>
+              </div>
+              <div style="margin-top:4px;padding-top:12px;border-top:1px solid var(--border-subtle);text-align:center">
+                <div style="font-size:0.75rem;color:var(--text-muted)">Monthly CO₂ Goal</div>
+                <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--clr-primary)">
+                  7.4 / 20 kg</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Activity -->
+          <div class="card anim-fade-up anim-delay-3">
+            <div class="chart-title" style="margin-bottom:8px">🕒 Recent Activity</div>
+            <div id="activity-feed"></div>
+          </div>
+        </div>
+
+        <!-- Right sidebar -->
+        <div style="display:flex;flex-direction:column;gap:24px">
+
+          <!-- XP Ring -->
+          <div class="card anim-fade-up" style="text-align:center">
+            <div class="chart-title" style="margin-bottom:16px">Your Progress</div>
+            <div class="xp-ring-container">
+              <div class="xp-ring-wrap">
+                <svg class="xp-ring-svg" viewBox="0 0 140 140">
+                  <defs>
+                    <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" style="stop-color:#00C896" />
+                      <stop offset="100%" style="stop-color:#00E5AD" />
+                    </linearGradient>
+                  </defs>
+                  <circle class="xp-ring-bg" cx="70" cy="70" r="65" />
+                  <circle class="xp-ring-fill" id="xp-ring-fill" cx="70" cy="70" r="65" />
+                </svg>
+                <div class="xp-ring-center">
+                  <div class="xp-ring-level" id="ring-level-num">2</div>
+                  <div class="xp-ring-label">LEVEL</div>
+                </div>
+              </div>
+              <div class="xp-ring-name" id="ring-level-name">🌿 Sprout</div>
+              <div style="font-size:0.8125rem;color:var(--text-muted)">
+                <span id="ring-xp">720</span> / <span id="ring-next-xp">800</span> XP to next level
+              </div>
+            </div>
+            <div class="progress-bar" style="margin-top:16px">
+              <div class="progress-fill" id="level-progress-bar" style="width:40%"></div>
+            </div>
+          </div>
+
+          <!-- Weekly Mission -->
+          <div class="card anim-fade-up anim-delay-1"
+            style="background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(0,200,150,0.1)); border: 1px solid var(--border-subtle); margin-bottom: 24px;">
+            <div class="flex justify-between items-center" style="margin-bottom:12px">
+              <div class="chart-title">⭐ Weekly Mission</div>
+              <div class="badge" style="background:var(--clr-accent);color:#fff;font-size:0.75rem">4d left</div>
+            </div>
+            <div style="font-weight:700;margin-bottom:8px">Plant 3 Virtual Trees</div>
+            <div style="font-size:0.875rem;color:var(--text-muted);margin-bottom:16px">Complete 3 planting missions to
+              grow the global forest. This actively tracks your core environmental steps!</div>
+            <div class="progress-bar" style="margin-bottom:8px">
+              <div class="progress-fill" style="width:33%;background:var(--clr-primary)"></div>
+            </div>
+            <div class="flex justify-between" style="font-size:0.75rem;">
+              <span style="color:var(--text-secondary)">1 / 3 Trees</span>
+              <span style="color:var(--clr-gold);font-weight:700">+500 XP</span>
+            </div>
+          </div>
+
+          <!-- Leaderboard Rank -->
+          <div class="card anim-fade-up anim-delay-1">
+            <div class="chart-title" style="margin-bottom:12px">🏆 Your Rank</div>
+            <div
+              style="display:flex;align-items:center;gap:16px;padding:16px;background:var(--clr-primary-dim);border-radius:var(--radius-md);border:1px solid rgba(0,200,150,0.2)">
+              <div style="font-family:var(--font-display);font-size:3rem;font-weight:900;color:var(--clr-primary)">#5
+              </div>
+              <div>
+                <div style="font-weight:600">Global Rank</div>
+                <div style="font-size:0.8125rem;color:var(--text-muted)">↑ Up 2 from last week</div>
+              </div>
+            </div>
+            <div class="flex gap-sm" style="margin-top:12px">
+              <div
+                style="flex:1;padding:10px;background:var(--bg-elevated);border-radius:var(--radius-md);text-align:center">
+                <div style="font-weight:700;color:var(--clr-primary)">#3</div>
+                <div style="font-size:0.75rem;color:var(--text-muted)">School Rank</div>
+              </div>
+              <div
+                style="flex:1;padding:10px;background:var(--bg-elevated);border-radius:var(--radius-md);text-align:center">
+                <div style="font-weight:700;color:var(--clr-accent)">#2</div>
+                <div style="font-size:0.75rem;color:var(--text-muted)">Friends Rank</div>
+              </div>
+            </div>
+            <a href="leaderboard.html" class="btn btn-secondary w-full"
+              style="margin-top:12px;justify-content:center">View Full Leaderboard</a>
+          </div>
+
+          <!-- Recent Badges -->
+          <div class="card anim-fade-up anim-delay-2">
+            <div class="flex justify-between items-center" style="margin-bottom:12px">
+              <div class="chart-title">🏅 Recent Badges</div>
+              <a href="badges.html" style="font-size:0.8125rem;color:var(--clr-primary)">View All →</a>
+            </div>
+            <div id="recent-badges" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px"></div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="card anim-fade-up anim-delay-3">
+            <div class="chart-title" style="margin-bottom:12px">⚡ Quick Actions</div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <a href="quizzes.html" class="btn btn-primary" style="justify-content:center">📝 Take a Quiz (+50 XP)</a>
+              <a href="missions.html" class="btn btn-accent" style="justify-content:center">🌍 Start a Mission (+150
+                XP)</a>
+              <a href="recommendations.html" class="btn btn-ghost" style="justify-content:center">🤖 Get AI Eco Tips</a>
+            </div>
+          </div>
+
+        </div>
+      </div><!-- /dashboard-grid -->
+
+    </div><!-- /container -->
+  </div><!-- /page-wrapper -->
+
+  <div id="toast-container"></div>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="auth.js"></script>
+  <script src="app.js"></script>
+  <script>Auth.guard();</script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const s = EQ.getState();
+      const level = EQ.getLevel(s.totalXP);
+      const progress = EQ.getLevelProgress(s.totalXP);
+
+      // Update stats
+      document.getElementById('user-name').textContent = s.name;
+      document.getElementById('streak-count').textContent = s.streak;
+      document.getElementById('dash-xp').textContent = s.totalXP.toLocaleString();
+      document.getElementById('dash-co2').innerHTML = s.co2Saved + '<span style="font-size:1rem;font-weight:500;color:var(--text-secondary)">kg</span>';
+      document.getElementById('dash-missions').textContent = s.missionsCompleted || 0;
+      const badgesList = s.unlockedBadges || [];
+      document.getElementById('dash-badges').textContent = badgesList.length;
+
+      // XP Ring
+      const circumference = 2 * Math.PI * 65;
+      const dashOffset = circumference - (circumference * progress.percent / 100);
+      const ringEl = document.getElementById('xp-ring-fill');
+      ringEl.style.strokeDasharray = circumference;
+      ringEl.style.strokeDashoffset = circumference;
+      setTimeout(() => { ringEl.style.strokeDashoffset = dashOffset; }, 300);
+
+      document.getElementById('ring-level-num').textContent = level.index + 1;
+      document.getElementById('ring-level-name').textContent = level.emoji + ' ' + level.name;
+      document.getElementById('ring-xp').textContent = s.totalXP;
+      document.getElementById('ring-next-xp').textContent = EQ.LEVELS[level.index + 1]?.minXP || '∞';
+      document.getElementById('level-progress-bar').style.width = progress.percent + '%';
+
+      // Activity Feed
+      const feed = document.getElementById('activity-feed');
+      if (!s.activityLog) {
+        s.activityLog = [
+          { icon: '📝', text: 'Completed "Oceans Quiz"', xp: '+50', time: '2h ago' },
+          { icon: '🌍', text: 'Finished Mission: "Meatless Monday"', xp: '+150', time: '5h ago' },
+          { icon: '🌿', text: 'Earned Sprout Badge', xp: '+100', time: '1d ago' }
+        ];
+      }
+      s.activityLog.forEach(a => {
+        feed.innerHTML += `
+      <div class="activity-item">
+        <div class="activity-icon">${a.icon}</div>
+        <div class="activity-text">${a.text}</div>
+        <div>
+          <div class="activity-xp">${a.xp}</div>
+          <div class="activity-time">${a.time}</div>
+        </div>
+      </div>`;
+      });
+
+      // Recent Badges
+      const badgeContainer = document.getElementById('recent-badges');
+      const userBadges = s.unlockedBadges || [];
+      userBadges.slice(0, 4).forEach(id => {
+        const bd = EQ.BADGES.find(b => b.id === id);
+        if (!bd) return;
+        const colorMap = { green: 'var(--clr-primary-dim)', gold: 'rgba(245,158,11,0.12)', purple: 'var(--clr-accent-dim)', silver: 'rgba(156,163,175,0.12)' };
+        badgeContainer.innerHTML += `
+      <div data-tooltip="${bd.name}" style="text-align:center;padding:10px;background:var(--bg-elevated);border-radius:var(--radius-md);cursor:default">
+        <div style="font-size:1.5rem">${bd.emoji}</div>
+        <div style="font-size:0.65rem;color:var(--text-muted);margin-top:4px">${bd.name}</div>
+      </div>`;
+      });
+
+      // Weekly Chart
+      const weekCtx = document.getElementById('weekly-chart').getContext('2d');
+      new Chart(weekCtx, {
+        type: 'bar',
+        data: {
+          labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          datasets: [{
+            label: 'XP Earned',
+            data: s.weeklyXP,
+            backgroundColor: 'rgba(0,200,150,0.2)',
+            borderColor: '#00C896',
+            borderWidth: 2,
+            borderRadius: 6,
+            borderSkipped: false,
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.parsed.y} XP` } } },
+          scales: {
+            x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8B949E' } },
+            y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8B949E' }, beginAtZero: true }
+          }
+        }
+      });
+
+      // Donut Chart
+      const donutCtx = document.getElementById('donut-chart').getContext('2d');
+      new Chart(donutCtx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Quizzes', 'Missions', 'Streaks', 'Bonus'],
+          datasets: [{
+            data: [210, 420, 75, 15],
+            backgroundColor: ['rgba(0,200,150,0.7)', 'rgba(124,58,237,0.7)', 'rgba(245,158,11,0.7)', 'rgba(59,130,246,0.7)'],
+            borderColor: ['#00C896', '#7C3AED', '#F59E0B', '#3B82F6'],
+            borderWidth: 2,
+            hoverOffset: 6,
+          }]
+        },
+        options: {
+          responsive: true,
+          cutout: '65%',
+          plugins: {
+            legend: { position: 'bottom', labels: { color: '#8B949E', padding: 12, boxWidth: 12 } },
+            tooltip: { callbacks: { label: c => ` ${c.label}: ${c.parsed} XP` } }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

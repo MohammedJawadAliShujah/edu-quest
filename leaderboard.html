@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboard – EcoQuest</title>
+  <meta name="description" content="Compete with students globally and within your school on the EcoQuest leaderboard.">
+  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo"><div class="nav-logo-icon">🌿</div>Eco<span>Quest</span></a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">🏠 Home</a>
+      <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+      <a href="quizzes.html" class="nav-link">📝 Quizzes</a>
+      <a href="missions.html" class="nav-link">🌍 Missions</a>
+      <a href="leaderboard.html" class="nav-link active">🏆 Leaderboard</a>
+      <a href="badges.html" class="nav-link">🏅 Badges</a>
+      <a href="recommendations.html" class="nav-link">🤖 AI Tips</a>
+      <a href="game.html" class="nav-link" style="color:var(--clr-gold);border:1px solid rgba(245,158,11,0.25);border-radius:var(--radius-full);padding:6px 14px">🎮 Game</a>
+    </div>
+    <div class="nav-right">
+      <div class="nav-xp-area">
+        <div class="nav-xp-label"><span id="nav-xp-val">720 XP</span><span id="nav-xp-next">to Tree</span></div>
+        <div class="nav-xp-bar"><div class="nav-xp-fill" id="nav-xp-fill" style="width:40%"></div></div>
+      </div>
+      <div class="nav-level-badge"><span id="nav-level-name">🌿 Sprout</span></div>
+      <div class="nav-avatar">EW</div>
+      <button onclick="Auth.logout()" title="Logout" style="background:transparent;border:1px solid var(--border-subtle);border-radius:var(--radius-full);padding:6px 12px;color:var(--text-muted);font-size:0.75rem;cursor:pointer;transition:all 0.2s;font-family:var(--font-sans)" onmouseover="this.style.color='var(--clr-danger)';this.style.borderColor='var(--clr-danger)'" onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border-subtle)'">⏻ Logout</button>
+    </div>
+    <button class="nav-hamburger" id="nav-hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+<div class="mobile-nav-drawer" id="mobile-nav-drawer">
+  <a href="index.html" class="nav-logo"><div class="nav-logo-icon">🌿</div>Eco<span style="color:var(--clr-primary)">Quest</span></a>
+  <div class="mobile-nav-links">
+    <a href="index.html" class="mobile-nav-link">🏠 Home</a>
+    <a href="dashboard.html" class="mobile-nav-link">📊 Dashboard</a>
+    <a href="quizzes.html" class="mobile-nav-link">📝 Quizzes</a>
+    <a href="missions.html" class="mobile-nav-link">🌍 Missions</a>
+    <a href="leaderboard.html" class="mobile-nav-link active">🏆 Leaderboard</a>
+    <a href="badges.html" class="mobile-nav-link">🏅 Badges</a>
+    <a href="recommendations.html" class="mobile-nav-link">🤖 AI Tips</a>
+    <a href="game.html" class="mobile-nav-link" style="color:var(--clr-gold)">🎮 Game</a>
+  </div>
+</div>
+
+<div class="page-wrapper">
+  <div class="container" style="max-width:860px">
+
+    <div class="page-header text-center" style="position:relative">
+      <div class="page-title">🏆 Leaderboard</div>
+      <p class="page-subtitle" style="margin:8px auto">Compete with eco-warriors worldwide and in your school</p>
+      
+      <div style="margin-top:20px">
+        <a href="contest.html" class="btn btn-primary" style="background:linear-gradient(90deg, #10b981, #3b82f6); border:none; padding:12px 28px; font-size:1.1rem; box-shadow:0 0 20px rgba(16,185,129,0.3); animation:pulseHint 2s infinite alternate;">
+          ✨ Take AI Essay Contest
+        </a>
+      </div>
+    </div>
+
+    <!-- Your rank banner -->
+    <div class="card anim-fade-up" style="background:linear-gradient(135deg,rgba(0,200,150,0.1),rgba(124,58,237,0.1));border-color:rgba(0,200,150,0.3);margin-bottom:24px;text-align:center;padding:20px">
+      <div style="font-size:0.875rem;color:var(--text-muted);margin-bottom:4px">Your Current Global Rank</div>
+      <div style="font-family:var(--font-display);font-size:3.5rem;font-weight:900" class="gradient-text">#5</div>
+      <div style="font-size:0.875rem;color:var(--text-secondary)">EcoWarrior · 720 XP · 🌿 Sprout Level</div>
+      <div style="margin-top:8px"><span style="font-size:0.8125rem;color:var(--clr-primary)">↑ Up 2 positions this week! Keep going!</span></div>
+    </div>
+
+    <!-- Tabs -->
+    <div data-tabs>
+      <div class="tabs" style="margin-bottom:28px">
+        <button class="tab-btn active" data-tab="global">🌍 Global</button>
+        <button class="tab-btn" data-tab="school">🏫 School</button>
+        <button class="tab-btn" data-tab="friends">👥 Friends</button>
+        <button class="tab-btn" data-tab="weekly">📅 This Week</button>
+      </div>
+
+      <!-- Global Tab -->
+      <div class="tab-panel active" id="tab-global">
+        <!-- Podium -->
+        <div class="podium anim-fade-up">
+          <!-- 2nd -->
+          <div class="podium-item">
+            <div class="podium-avatar" style="background:linear-gradient(135deg,#9CA3AF,#6B7280)">PK</div>
+            <div class="podium-name">Priya K.</div>
+            <div class="podium-score">1,820 XP</div>
+            <div class="podium-stand silver">2</div>
+          </div>
+          <!-- 1st -->
+          <div class="podium-item" style="margin-bottom:0">
+            <div class="podium-crown">👑</div>
+            <div class="podium-avatar" style="width:68px;height:68px;font-size:1.4rem;border:3px solid var(--clr-gold);box-shadow:0 0 20px rgba(245,158,11,0.4)">AS</div>
+            <div class="podium-name" style="font-weight:700">Arjun S.</div>
+            <div class="podium-score">2,450 XP</div>
+            <div class="podium-stand gold">1</div>
+          </div>
+          <!-- 3rd -->
+          <div class="podium-item">
+            <div class="podium-avatar" style="background:linear-gradient(135deg,#CD7C2F,#A0522D)">MT</div>
+            <div class="podium-name">Maya T.</div>
+            <div class="podium-score">1,650 XP</div>
+            <div class="podium-stand bronze">3</div>
+          </div>
+        </div>
+
+        <!-- Leaderboard Table -->
+        <div class="card anim-fade-up anim-delay-1" style="padding:8px">
+          <div style="padding:12px 16px;border-bottom:1px solid var(--border-subtle)">
+            <div style="display:flex;align-items:center;gap:12px;font-size:0.75rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em">
+              <div style="width:28px">#</div>
+              <div style="width:36px"></div>
+              <div style="flex:1">Player</div>
+              <div style="width:80px;text-align:right">XP</div>
+              <div style="width:40px;text-align:right">Δ</div>
+            </div>
+          </div>
+          <div id="global-lb"></div>
+        </div>
+      </div>
+
+      <!-- School Tab -->
+      <div class="tab-panel" id="tab-school">
+        <div class="card anim-fade-up" style="padding:8px">
+          <div style="padding:16px;border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;justify-content:space-between">
+            <div style="font-weight:600">🏫 Green Valley High School</div>
+            <div class="badge badge-green">Your School</div>
+          </div>
+          <div id="school-lb"></div>
+        </div>
+      </div>
+
+      <!-- Friends Tab -->
+      <div class="tab-panel" id="tab-friends">
+        <div class="card anim-fade-up" style="padding:8px">
+          <div id="friends-lb"></div>
+        </div>
+      </div>
+
+      <!-- Weekly Tab -->
+      <div class="tab-panel" id="tab-weekly">
+        <div style="margin-bottom:16px;padding:16px;background:var(--clr-primary-dim);border:1px solid rgba(0,200,150,0.2);border-radius:var(--radius-md)">
+          <div style="font-weight:600;color:var(--clr-primary)">⚡ Weekly XP Challenge</div>
+          <div style="font-size:0.875rem;color:var(--text-secondary);margin-top:4px">Resets every Monday. Top 3 earn exclusive weekly badges!</div>
+        </div>
+        <div class="card anim-fade-up" style="padding:8px">
+          <div id="weekly-lb"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- How Ranking Works -->
+    <div class="card" style="margin-top:24px;background:var(--bg-card)">
+      <div style="font-weight:700;margin-bottom:12px">📊 How Rankings Work</div>
+      <div class="grid-3 gap-md" style="text-align:center;font-size:0.875rem">
+        <div style="padding:12px;background:var(--bg-elevated);border-radius:var(--radius-md)">
+          <div style="font-size:1.5rem;margin-bottom:6px">📝</div>
+          <div style="font-weight:600">Quiz Points</div>
+          <div style="color:var(--text-muted);margin-top:4px">50 XP per quiz</div>
+        </div>
+        <div style="padding:12px;background:var(--bg-elevated);border-radius:var(--radius-md)">
+          <div style="font-size:1.5rem;margin-bottom:6px">🌍</div>
+          <div style="font-weight:600">Mission XP</div>
+          <div style="color:var(--text-muted);margin-top:4px">Up to 350 XP/mission</div>
+        </div>
+        <div style="padding:12px;background:var(--bg-elevated);border-radius:var(--radius-md)">
+          <div style="font-size:1.5rem;margin-bottom:6px">🔥</div>
+          <div style="font-weight:600">Streak Bonus</div>
+          <div style="color:var(--text-muted);margin-top:4px">+25 XP per day</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
+<script>Auth.guard();</script>
+<script>
+const GLOBAL_LB = [
+  { rank:1, init:'AS', name:'Arjun S.',    school:'DPS Delhi',          xp:2450, level:'🌲 Tree',     change:'+3', up:true },
+  { rank:2, init:'PK', name:'Priya K.',    school:'KV Mumbai',          xp:1820, level:'🌳 Sapling',  change:'→',  up:false },
+  { rank:3, init:'MT', name:'Maya T.',     school:'RKM Kolkata',        xp:1650, level:'🌳 Sapling',  change:'+1', up:true },
+  { rank:4, init:'RV', name:'Rohan V.',    school:'Christ PU Bangalore',xp:1340, level:'🌿 Sprout',   change:'-1', up:false },
+  { rank:5, init:'EW', name:'EcoWarrior',  school:'Green Valley High',  xp:720,  level:'🌿 Sprout',   change:'+2', up:true, me:true },
+  { rank:6, init:'SK', name:'Simran K.',   school:'St. Mary\'s Pune',   xp:690,  level:'🌿 Sprout',   change:'→',  up:false },
+  { rank:7, init:'AS', name:'Aditya S.',   school:'Amity Noida',        xp:620,  level:'🌿 Sprout',   change:'+3', up:true },
+  { rank:8, init:'DM', name:'Diya M.',     school:'MES Kochi',          xp:540,  level:'🌿 Sprout',   change:'-2', up:false },
+  { rank:9, init:'KP', name:'Kumar P.',    school:'DAV Chennai',        xp:490,  level:'🌱 Seedling', change:'→',  up:false },
+  { rank:10,init:'NJ', name:'Neha J.',     school:'Loreto Kolkata',     xp:420,  level:'🌱 Seedling', change:'+1', up:true },
+];
+
+const SCHOOL_LB = [
+  { rank:1, init:'JS', name:'Jaya S.',     xp:1120, level:'🌳 Sapling', change:'+1', up:true },
+  { rank:2, init:'AM', name:'Aryan M.',    xp:980,  level:'🌳 Sapling', change:'→',  up:false },
+  { rank:3, init:'EW', name:'EcoWarrior',  xp:720,  level:'🌿 Sprout',  change:'+2', up:true, me:true },
+  { rank:4, init:'RP', name:'Ritu P.',     xp:640,  level:'🌿 Sprout',  change:'-1', up:false },
+  { rank:5, init:'VK', name:'Varun K.',    xp:520,  level:'🌿 Sprout',  change:'+2', up:true },
+];
+
+const FRIENDS_LB = [
+  { rank:1, init:'RT', name:'Rahul T.',    xp:1400, level:'🌳 Sapling',  change:'+1', up:true },
+  { rank:2, init:'EW', name:'EcoWarrior',  xp:720,  level:'🌿 Sprout',   change:'+2', up:true, me:true },
+  { rank:3, init:'SN', name:'Sneha N.',    xp:580,  level:'🌿 Sprout',   change:'→',  up:false },
+  { rank:4, init:'VP', name:'Vikram P.',   xp:440,  level:'🌱 Seedling', change:'-2', up:false },
+];
+
+const WEEKLY_LB = [
+  { rank:1, init:'EW', name:'EcoWarrior',  xp:270, level:'📝 3 Quizzes', change:'🔥', up:true, me:true },
+  { rank:2, init:'AS', name:'Arjun S.',    xp:225, level:'📝 2 Quizzes', change:'→',  up:false },
+  { rank:3, init:'PK', name:'Priya K.',    xp:200, level:'🌍 1 Mission', change:'+1', up:true },
+  { rank:4, init:'MT', name:'Maya T.',     xp:175, level:'📝 2 Quizzes', change:'-1', up:false },
+  { rank:5, init:'SK', name:'Simran K.',   xp:150, level:'📝 1 Quiz',    change:'+2', up:true },
+];
+
+function renderLB(data, containerId) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = data.map(p => `
+    <div class="lb-row ${p.me ? 'me' : ''}">
+      <div class="lb-rank ${p.rank <= 3 ? 'top' : ''}">${p.rank <= 3 ? ['🥇','🥈','🥉'][p.rank-1] : p.rank}</div>
+      <div class="lb-avatar-sm" style="background:${p.me ? 'linear-gradient(135deg,#00C896,#7C3AED)' : 'linear-gradient(135deg,#7C3AED,#00C896)'}">${p.init}</div>
+      <div class="lb-info">
+        <div class="lb-name">${p.name}${p.me ? ' <span style="font-size:0.7rem;color:var(--clr-primary)">(You)</span>' : ''}</div>
+        <div class="lb-detail">${p.school || p.level}</div>
+      </div>
+      <div class="lb-score">${p.xp.toLocaleString()} XP</div>
+      <div class="lb-change ${p.up ? 'up' : p.change === '→' ? '' : 'down'}">${p.change}</div>
+    </div>
+  `).join('');
+}
+
+// Dynamic user XP integration
+function getActualXP() {
+  if (window.EQ && typeof EQ.getState === 'function') {
+    return EQ.getState().xp || 0;
+  }
+  const local = localStorage.getItem('eq_game_state');
+  if (local) return JSON.parse(local).xp || 0;
+  return 0;
+}
+
+function processAndSortLB(data, actualXP) {
+  // Inject the user's real XP and re-sort
+  const arr = [...data];
+  const userRow = arr.find(row => row.me);
+  if (userRow) {
+    if (actualXP > 0 || userRow.xp < actualXP) {
+      userRow.xp = Math.max(userRow.xp, actualXP);
+      if (actualXP > 720) {
+        userRow.change = '🚀'; // Dynamic bump
+        userRow.up = true;
+      }
+    }
+  }
+
+  // Sort strictly by XP descending
+  arr.sort((a, b) => b.xp - a.xp);
+
+  // Re-assign ranks
+  arr.forEach((row, idx) => {
+    row.rank = idx + 1;
+  });
+
+  return arr;
+}
+
+function updateHeroRank(sortedGlobal) {
+  const me = sortedGlobal.find(r => r.me);
+  if (!me) return;
+  const rankEl = document.querySelector('.gradient-text');
+  if (rankEl) rankEl.textContent = `#${me.rank}`;
+  
+  const subtitle = document.querySelector('.gradient-text').nextElementSibling;
+  if (subtitle && subtitle.textContent.includes('EcoWarrior')) {
+    subtitle.innerHTML = `EcoWarrior · <strong>${me.xp.toLocaleString()} XP</strong> · ${me.level}`;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  let actualXP = getActualXP();
+  
+  // Keep syncing if it loads late
+  setInterval(() => {
+    const newXP = getActualXP();
+    if (newXP !== actualXP) {
+      actualXP = newXP;
+      const finalGlobal = processAndSortLB(GLOBAL_LB, actualXP);
+      renderLB(finalGlobal, 'global-lb');
+      renderLB(processAndSortLB(SCHOOL_LB, actualXP), 'school-lb');
+      renderLB(processAndSortLB(FRIENDS_LB, actualXP), 'friends-lb');
+      updateHeroRank(finalGlobal);
+    }
+  }, 1000);
+
+  const finalGlobal = processAndSortLB(GLOBAL_LB, actualXP);
+  updateHeroRank(finalGlobal);
+
+  renderLB(finalGlobal, 'global-lb');
+  renderLB(processAndSortLB(SCHOOL_LB, actualXP), 'school-lb');
+  renderLB(processAndSortLB(FRIENDS_LB, actualXP), 'friends-lb');
+  renderLB(WEEKLY_LB.map(w => ({ ...w, school: w.level })), 'weekly-lb');
+
+  // Tab switching
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabPanels = document.querySelectorAll('.tab-panel');
+  tabBtns.forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach(b => b.classList.remove('active'));
+      tabPanels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      tabPanels[i].classList.add('active');
+    });
+  });
+
+  // Animate the "me" row
+  setTimeout(() => {
+    document.querySelectorAll('.lb-row.me').forEach(row => {
+      row.style.transition = 'box-shadow 0.5s ease';
+      row.style.boxShadow = '0 0 0 2px var(--clr-primary)';
+    });
+  }, 800);
+});
+</script>
+</body>
+</html>

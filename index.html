@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoQuest – Gamified Environmental Education Platform</title>
+  <meta name="description"
+    content="EcoQuest transforms environmental education into an engaging, gamified experience with quizzes, eco missions, leaderboards, and real-world impact tracking.">
+  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+  <script src="https://unpkg.com/globe.gl"></script>
+  <style>
+    body {
+      background: linear-gradient(145deg, #133527 0%, #06110a 100%) !important;
+      background-attachment: fixed !important;
+    }
+
+    .hero {
+      background: transparent !important;
+    }
+  </style>
+  <style>
+    /* Dropdown CSS for Desktop Nav */
+    .nav-dropdown {
+      position: relative;
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
+
+    .nav-dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: var(--bg-card);
+      min-width: 180px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      z-index: 100;
+      flex-direction: column;
+      padding: 8px 0;
+      animation: fade-down 0.2s ease;
+    }
+
+    .nav-dropdown:hover .nav-dropdown-content {
+      display: flex;
+    }
+
+    .nav-dropdown-item {
+      color: var(--text-secondary);
+      padding: 10px 16px;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    .nav-dropdown-item:hover {
+      background-color: var(--bg-elevated);
+      color: var(--clr-primary);
+      padding-left: 20px;
+    }
+
+    @keyframes fade-down {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <nav id="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon">🌿</div>
+        Eco<span>Quest</span>
+      </a>
+
+    <div class="nav-links">
+      <a href="index.html" class="nav-link active"><span class="nav-icon">🏠</span> Home</a>
+      <a href="dashboard.html" class="nav-link"><span class="nav-icon">📊</span> Dashboard</a>
+      
+      <div class="nav-dropdown">
+        <button class="nav-link" style="background:transparent;border:none;cursor:pointer;font-family:inherit;font-size:inherit;display:flex;align-items:center;padding:12px;color:var(--text-primary)">
+          <span class="nav-icon">🌟</span> Activities <span style="font-size:0.6em;margin-left:6px;opacity:0.7">▼</span>
+        </button>
+        <div class="nav-dropdown-content">
+          <a href="quizzes.html" class="nav-dropdown-item">📝 Quizzes</a>
+          <a href="missions.html" class="nav-dropdown-item">🌍 Missions</a>
+          <a href="catalog.html" class="nav-dropdown-item">🛒 Rewards Catalog</a>
+          <a href="leaderboard.html" class="nav-dropdown-item">🏆 Leaderboard</a>
+          <a href="badges.html" class="nav-dropdown-item">🏅 Badges</a>
+          <a href="recommendations.html" class="nav-dropdown-item">🤖 AI Tips</a>
+        </div>
+      </div>
+      
+      <a href="game.html" class="nav-link" style="color:var(--clr-gold);border:1px solid rgba(245,158,11,0.25);border-radius:var(--radius-full);padding:6px 14px"><span class="nav-icon">🎮</span> Game</a>
+    </div>
+    <div class="nav-right">
+        <div class="nav-xp-area">
+          <div class="nav-xp-label">
+            <span id="nav-xp-val">720 XP</span>
+            <span id="nav-xp-next">to Tree</span>
+          </div>
+          <div class="nav-xp-bar">
+            <div class="nav-xp-fill" id="nav-xp-fill" style="width:40%"></div>
+          </div>
+        </div>
+        <div class="nav-level-badge" id="nav-level-badge">
+          <span id="nav-level-name">🌿 Sprout</span>
+        </div>
+        <div class="nav-avatar" id="nav-avatar" title="Your Profile">EW</div>
+        <button onclick="Auth.logout()" title="Logout"
+          style="background:transparent;border:1px solid var(--border-subtle);border-radius:var(--radius-full);padding:6px 12px;color:var(--text-muted);font-size:0.75rem;cursor:pointer;transition:all 0.2s;font-family:var(--font-sans)"
+          onmouseover="this.style.color='var(--clr-danger)';this.style.borderColor='var(--clr-danger)'"
+          onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border-subtle)'">⏻
+          Logout</button>
+      </div>
+
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile drawer -->
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+  <div class="mobile-nav-drawer" id="mobile-nav-drawer">
+    <a href="index.html" class="nav-logo">
+      <div class="nav-logo-icon" style="background:linear-gradient(135deg,#00C896,#00A87A)">🌿</div>
+      Eco<span style="color:var(--clr-primary)">Quest</span>
+    </a>
+  <div class="mobile-nav-links">
+    <a href="index.html" class="mobile-nav-link active">🏠 Home</a>
+    <a href="dashboard.html" class="mobile-nav-link">📊 Dashboard</a>
+    <a href="quizzes.html" class="mobile-nav-link">📝 Quizzes</a>
+    <a href="catalog.html" class="mobile-nav-link">🛒 Catalog</a>
+    <a href="missions.html" class="mobile-nav-link">🌍 Missions</a>
+    <a href="leaderboard.html" class="mobile-nav-link">🏆 Leaderboard</a>
+    <a href="badges.html" class="mobile-nav-link">🏅 Badges</a>
+    <a href="recommendations.html" class="mobile-nav-link">🤖 AI Tips</a>
+    <a href="game.html" class="mobile-nav-link" style="color:var(--clr-gold)">🎮 Game</a>
+  </div>
+</div>
+
+  <!-- ── HERO ── -->
+  <section class="hero page-wrapper" style="padding-top:0">
+    <canvas id="hero-canvas" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+
+    <!-- Animated background gradient -->
+    <div
+      style="position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 60% 50%, rgba(0,200,150,0.06) 0%,transparent 70%),radial-gradient(ellipse 60% 80% at 80% 20%, rgba(124,58,237,0.06) 0%,transparent 60%);pointer-events:none;z-index:0">
+    </div>
+
+    <div class="container"
+      style="position:relative;z-index:1;padding-top:120px;padding-bottom:80px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:40px;">
+      <div class="hero-content" style="flex:1; min-width:320px; max-width:600px;">
+        <div class="hero-badge anim-fade-up">
+          🌱 Now with AI-powered Eco Recommendations
+        </div>
+        <h1 class="anim-fade-up anim-delay-1">
+          Learn. Act. <span class="gradient-text">Save the Planet.</span>
+        </h1>
+        <p class="hero-desc anim-fade-up anim-delay-2">
+          EcoQuest turns environmental education into an epic adventure. Complete quizzes, tackle real-world eco
+          missions, earn badges, and track your CO₂ impact — all while competing with peers.
+        </p>
+        <div class="hero-actions anim-fade-up anim-delay-3">
+          <a href="dashboard.html" class="btn btn-primary btn-lg">
+            🚀 Start Your Quest
+          </a>
+          <a href="quizzes.html" class="btn btn-secondary btn-lg">
+            📝 Take a Quiz
+          </a>
+        </div>
+
+        <div class="hero-stats anim-fade-up anim-delay-4">
+          <div class="hero-stat-item">
+            <div class="hero-stat-value" id="stat-students">12,400+</div>
+            <div class="hero-stat-label">Students</div>
+          </div>
+          <div class="hero-stat-item">
+            <div class="hero-stat-value" id="stat-co2">48T</div>
+            <div class="hero-stat-label">CO₂ Saved</div>
+          </div>
+          <div class="hero-stat-item">
+            <div class="hero-stat-value" id="stat-missions">94K+</div>
+            <div class="hero-stat-label">Missions Done</div>
+          </div>
+          <div class="hero-stat-item">
+            <div class="hero-stat-value" id="stat-badges">320+</div>
+            <div class="hero-stat-label">Schools</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero 3D interactive globe -->
+      <div class="hero-visual anim-fade-up anim-delay-3"
+        style="display:flex; align-items:center; justify-content:center; position:relative; z-index:10; flex-shrink:0;"
+        id="hero-visual-desktop">
+        <div id="globe-container" style="cursor:grab; filter:drop-shadow(0 0 40px rgba(16,185,129,0.35));"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FEATURES ── -->
+  <section class="section"
+    style="background:var(--bg-card);border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle)">
+    <div class="container">
+      <div class="section-header text-center">
+        <div class="section-tag">Why EcoQuest?</div>
+        <h2 style="max-width:600px;margin:0 auto">Everything you need to become an <span
+            class="gradient-text">EcoHero</span></h2>
+      </div>
+
+      <div class="grid-3 gap-xl">
+        <div class="feature-card anim-fade-up">
+          <div class="feature-icon">📝</div>
+          <div class="feature-title">Gamified Quizzes</div>
+          <p class="feature-desc">5 eco-categories with 10 questions each. Race the timer, build streaks, and earn XP
+            for every correct answer.</p>
+        </div>
+        <div class="feature-card anim-fade-up anim-delay-1">
+          <div class="feature-icon" style="background:var(--clr-accent-dim)">🌍</div>
+          <div class="feature-title">Eco Missions</div>
+          <p class="feature-desc">Real-world challenges — plant trees, reduce plastic, save energy. Submit photo proof
+            and earn major XP rewards.</p>
+        </div>
+        <div class="feature-card anim-fade-up anim-delay-2">
+          <div class="feature-icon" style="background:rgba(245,158,11,0.12)">🏆</div>
+          <div class="feature-title">Live Leaderboard</div>
+          <p class="feature-desc">Compete globally and within your school. Climb the ranks, achieve podium spots, and
+            earn exclusive badges.</p>
+        </div>
+        <div class="feature-card anim-fade-up anim-delay-3">
+          <div class="feature-icon" style="background:rgba(245,158,11,0.12)">🏅</div>
+          <div class="feature-title">15 Achievements</div>
+          <p class="feature-desc">Unlock badges for dedication, performance, and environmental impact. Show off your
+            eco-credentials.</p>
+        </div>
+        <div class="feature-card anim-fade-up anim-delay-4">
+          <div class="feature-icon">📊</div>
+          <div class="feature-title">Impact Dashboard</div>
+          <p class="feature-desc">Visualize your actual environmental contributions. Track CO₂ saved, trees planted, and
+            weekly progress.</p>
+        </div>
+        <div class="feature-card anim-fade-up anim-delay-5">
+          <div class="feature-icon" style="background:var(--clr-accent-dim)">🤖</div>
+          <div class="feature-title">AI Eco Advisor</div>
+          <p class="feature-desc">Personalized sustainability recommendations based on your activity, location, and
+            learning patterns.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── HOW IT WORKS ── -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header text-center">
+        <div class="section-tag">How It Works</div>
+        <h2>Your journey to becoming an <span class="gradient-text">EcoHero</span></h2>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:24px;position:relative">
+        <!-- connector line -->
+        <div
+          style="position:absolute;top:40px;left:12.5%;right:12.5%;height:2px;background:linear-gradient(90deg,var(--clr-primary),var(--clr-accent));opacity:0.3;z-index:0"
+          class="hidden-mobile"></div>
+
+        <div class="text-center anim-fade-up" style="position:relative;z-index:1">
+          <div
+            style="width:80px;height:80px;border-radius:50%;background:var(--clr-primary-dim);border:2px solid rgba(0,200,150,0.3);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px">
+            🎯</div>
+          <h4>Join &amp; Set Goals</h4>
+          <p style="font-size:0.875rem;margin-top:6px">Create your eco profile and select your sustainability goals</p>
+        </div>
+        <div class="text-center anim-fade-up anim-delay-1" style="position:relative;z-index:1">
+          <div
+            style="width:80px;height:80px;border-radius:50%;background:var(--clr-primary-dim);border:2px solid rgba(0,200,150,0.3);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px">
+            📚</div>
+          <h4>Learn &amp; Quiz</h4>
+          <p style="font-size:0.875rem;margin-top:6px">Master environmental topics through interactive quizzes</p>
+        </div>
+        <div class="text-center anim-fade-up anim-delay-2" style="position:relative;z-index:1">
+          <div
+            style="width:80px;height:80px;border-radius:50%;background:var(--clr-primary-dim);border:2px solid rgba(0,200,150,0.3);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px">
+            🌱</div>
+          <h4>Take Real Action</h4>
+          <p style="font-size:0.875rem;margin-top:6px">Complete eco missions and submit proof of your impact</p>
+        </div>
+        <div class="text-center anim-fade-up anim-delay-3" style="position:relative;z-index:1">
+          <div
+            style="width:80px;height:80px;border-radius:50%;background:var(--clr-primary-dim);border:2px solid rgba(0,200,150,0.3);display:flex;align-items:center;justify-content:center;font-size:2rem;margin:0 auto 16px">
+            ⚡</div>
+          <h4>Level Up &amp; Earn</h4>
+          <p style="font-size:0.875rem;margin-top:6px">Gain XP, unlock badges, and climb the leaderboard</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── LEVELS SHOWCASE ── -->
+  <section class="section"
+    style="background:var(--bg-card);border-top:1px solid var(--border-subtle);border-bottom:1px solid var(--border-subtle)">
+    <div class="container">
+      <div class="section-header text-center">
+        <div class="section-tag">Level System</div>
+        <h2>6 levels from <span class="gradient-text">Seedling to EcoHero</span></h2>
+      </div>
+
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+        <div class="card" style="text-align:center;padding:20px;flex:1;min-width:130px;max-width:180px">
+          <div style="font-size:2.5rem;margin-bottom:8px">🌱</div>
+          <div style="font-weight:700;font-family:var(--font-display)">Seedling</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">0 XP</div>
+        </div>
+        <div class="card" style="text-align:center;padding:20px;flex:1;min-width:130px;max-width:180px">
+          <div style="font-size:2.5rem;margin-bottom:8px">🌿</div>
+          <div style="font-weight:700;font-family:var(--font-display)">Sprout</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">300 XP</div>
+        </div>
+        <div class="card" style="text-align:center;padding:20px;flex:1;min-width:130px;max-width:180px">
+          <div style="font-size:2.5rem;margin-bottom:8px">🌳</div>
+          <div style="font-weight:700;font-family:var(--font-display)">Sapling</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">800 XP</div>
+        </div>
+        <div class="card" style="text-align:center;padding:20px;flex:1;min-width:130px;max-width:180px">
+          <div style="font-size:2.5rem;margin-bottom:8px">🌲</div>
+          <div style="font-weight:700;font-family:var(--font-display)">Tree</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">1800 XP</div>
+        </div>
+        <div class="card"
+          style="text-align:center;padding:20px;flex:1;min-width:130px;max-width:180px;border-color:rgba(124,58,237,0.3)">
+          <div style="font-size:2.5rem;margin-bottom:8px">🦺</div>
+          <div style="font-weight:700;font-family:var(--font-display)">Guardian</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">3500 XP</div>
+        </div>
+        <div class="card card-glow-green anim-pulse-glow"
+          style="text-align:center;padding:20px;flex:1;min-width:130px;max-width:180px">
+          <div style="font-size:2.5rem;margin-bottom:8px">⚡</div>
+          <div class="gradient-text" style="font-weight:800;font-family:var(--font-display)">EcoHero</div>
+          <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">6000 XP</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA ── -->
+  <section class="section">
+    <div class="container text-center">
+      <div style="max-width:560px;margin:0 auto">
+        <div style="font-size:4rem;margin-bottom:16px;animation:float 3s ease-in-out infinite">🌍</div>
+        <h2>Ready to make a real impact?</h2>
+        <p style="margin:16px auto;font-size:1.05rem">Join 12,400+ students already on their EcoQuest journey. Every
+          action counts — start yours today.</p>
+        <div class="flex justify-center gap-md" style="margin-top:32px">
+          <a href="dashboard.html" class="btn btn-primary btn-lg">🚀 Begin EcoQuest</a>
+          <a href="quizzes.html" class="btn btn-ghost btn-lg">Explore Quizzes →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="grid-4 gap-xl" style="grid-template-columns:2fr 1fr 1fr 1fr">
+        <div>
+          <div class="footer-brand">
+            <div class="nav-logo-icon">🌿</div>
+            <span style="font-family:var(--font-display);font-weight:800;font-size:1.1rem">EcoQuest</span>
+          </div>
+          <p class="footer-desc">Transforming environmental education through gamification. Learn, act, and track your
+            real-world eco impact.</p>
+        </div>
+        <div>
+          <div class="footer-heading">Platform</div>
+          <div class="footer-links">
+            <a href="dashboard.html" class="footer-link">Dashboard</a>
+            <a href="quizzes.html" class="footer-link">Quizzes</a>
+            <a href="missions.html" class="footer-link">Eco Missions</a>
+            <a href="leaderboard.html" class="footer-link">Leaderboard</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-heading">Learn</div>
+          <div class="footer-links">
+            <a href="badges.html" class="footer-link">Badges</a>
+            <a href="recommendations.html" class="footer-link">AI Advisor</a>
+            <a href="#" class="footer-link">Resources</a>
+            <a href="#" class="footer-link">Blog</a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-heading">About</div>
+          <div class="footer-links">
+            <a href="#" class="footer-link">Mission</a>
+            <a href="#" class="footer-link">Team</a>
+            <a href="#" class="footer-link">Partners</a>
+            <a href="#" class="footer-link">Contact</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 EcoQuest. Built for a greener planet 🌍</span>
+        <span>Made with 💚 for Environmental Education</span>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast-container"></div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="auth.js"></script>
+  <script src="app.js"></script>
+  <script src="particles.js"></script>
+  <script>Auth.guard();</script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Start particle canvas
+      const canvas = document.getElementById('hero-canvas');
+      if (canvas) {
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        new EcoParticles('hero-canvas', { count: 35, speed: 0.25 });
+      }
+
+      // Start 3D Interactive Globe
+      const globeEl = document.getElementById('globe-container');
+      if (globeEl) {
+        const globeSize = window.innerWidth < 768 ? 320 : 480;
+        const world = Globe()(globeEl)
+          .backgroundColor('rgba(0,0,0,0)')
+          .width(globeSize).height(globeSize)
+          .showAtmosphere(true)
+          .atmosphereColor('#10b981')
+          .atmosphereAltitude(0.2)
+          .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg');
+
+        world.controls().autoRotate = true;
+        world.controls().autoRotateSpeed = 1.0;
+        world.controls().enableZoom = false;
+
+        fetch('https://unpkg.com/globe.gl/example/datasets/ne_110m_admin_0_countries.geojson')
+          .then(res => res.json())
+          .then(countries => {
+            world.polygonsData(countries.features)
+              .polygonCapColor(() => '#10b981')
+              .polygonSideColor(() => 'rgba(16, 185, 129, 0.2)')
+              .polygonStrokeColor(() => '#040e09')
+              .polygonAltitude(0.02)
+              .onPolygonHover(hoverD => world
+                .polygonAltitude(d => d === hoverD ? 0.08 : 0.02)
+                .polygonCapColor(d => d === hoverD ? '#3b82f6' : '#10b981')
+              );
+          })
+          .catch(err => console.error("Could not load countries maps", err));
+      }
+
+      // Animate counting stats
+      function animateCount(el, target, suffix = '', decimals = 0) {
+        const start = 0;
+        const duration = 2000;
+        const startTime = performance.now();
+        const update = (now) => {
+          const elapsed = now - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          const current = start + (target - start) * eased;
+          el.textContent = (decimals > 0 ? current.toFixed(decimals) : Math.round(current).toLocaleString()) + suffix;
+          if (progress < 1) requestAnimationFrame(update);
+        };
+        requestAnimationFrame(update);
+      }
+
+      setTimeout(() => {
+        animateCount(document.getElementById('stat-students'), 12400, '+');
+        animateCount(document.getElementById('stat-co2'), 48, 'T');
+        animateCount(document.getElementById('stat-missions'), 94, 'K+');
+        animateCount(document.getElementById('stat-badges'), 320, '+');
+      }, 500);
+
+      // Show welcome toast
+      setTimeout(() => EQ.showToast('success', 'Welcome to EcoQuest! 🌿', 'Start your environmental journey today.'), 1500);
+    });
+  </script>
+</body>
+
+</html>

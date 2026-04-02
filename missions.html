@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eco Missions – EcoQuest</title>
+  <meta name="description" content="Complete real-world eco missions — plant trees, reduce plastic, save energy — and earn XP for your environmental actions.">
+  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo"><div class="nav-logo-icon">🌿</div>Eco<span>Quest</span></a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">🏠 Home</a>
+      <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+      <a href="quizzes.html" class="nav-link">📝 Quizzes</a>
+      <a href="missions.html" class="nav-link active">🌍 Missions</a>
+      <a href="leaderboard.html" class="nav-link">🏆 Leaderboard</a>
+      <a href="badges.html" class="nav-link">🏅 Badges</a>
+      <a href="recommendations.html" class="nav-link">🤖 AI Tips</a>
+      <a href="game.html" class="nav-link" style="color:var(--clr-gold);border:1px solid rgba(245,158,11,0.25);border-radius:var(--radius-full);padding:6px 14px">🎮 Game</a>
+    </div>
+    <div class="nav-right">
+      <div class="nav-xp-area">
+        <div class="nav-xp-label"><span id="nav-xp-val">720 XP</span><span id="nav-xp-next">to Tree</span></div>
+        <div class="nav-xp-bar"><div class="nav-xp-fill" id="nav-xp-fill" style="width:40%"></div></div>
+      </div>
+      <div class="nav-level-badge"><span id="nav-level-name">🌿 Sprout</span></div>
+      <div class="nav-avatar">EW</div>
+      <button onclick="Auth.logout()" title="Logout" style="background:transparent;border:1px solid var(--border-subtle);border-radius:var(--radius-full);padding:6px 12px;color:var(--text-muted);font-size:0.75rem;cursor:pointer;transition:all 0.2s;font-family:var(--font-sans)" onmouseover="this.style.color='var(--clr-danger)';this.style.borderColor='var(--clr-danger)'" onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border-subtle)'">⏻ Logout</button>
+    </div>
+    <button class="nav-hamburger" id="nav-hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+<div class="mobile-nav-drawer" id="mobile-nav-drawer">
+  <a href="index.html" class="nav-logo"><div class="nav-logo-icon">🌿</div>Eco<span style="color:var(--clr-primary)">Quest</span></a>
+  <div class="mobile-nav-links">
+    <a href="index.html" class="mobile-nav-link">🏠 Home</a>
+    <a href="dashboard.html" class="mobile-nav-link">📊 Dashboard</a>
+    <a href="quizzes.html" class="mobile-nav-link">📝 Quizzes</a>
+    <a href="missions.html" class="mobile-nav-link active">🌍 Missions</a>
+    <a href="leaderboard.html" class="mobile-nav-link">🏆 Leaderboard</a>
+    <a href="badges.html" class="mobile-nav-link">🏅 Badges</a>
+    <a href="recommendations.html" class="mobile-nav-link">🤖 AI Tips</a>
+    <a href="game.html" class="mobile-nav-link" style="color:var(--clr-gold)">🎮 Game</a>
+  </div>
+</div>
+
+<div class="page-wrapper">
+  <div class="container">
+
+    <div class="page-header flex justify-between items-center flex-wrap gap-md">
+      <div>
+        <div class="page-title">🌍 Eco Missions</div>
+        <div class="page-subtitle">Real-world challenges that create real environmental impact</div>
+      </div>
+      <div class="flex gap-sm items-center">
+        <div class="badge badge-purple">🌍 2 Completed</div>
+        <div class="badge badge-gold">⚡ +150 XP per mission</div>
+      </div>
+    </div>
+
+    <!-- Filter Chips -->
+    <div class="flex gap-sm flex-wrap" style="margin-bottom:28px" id="mission-filters">
+      <button class="chip active" data-filter="all">All Missions</button>
+      <button class="chip" data-filter="easy">🟢 Easy</button>
+      <button class="chip" data-filter="medium">🟡 Medium</button>
+      <button class="chip" data-filter="hard">🔴 Hard</button>
+      <button class="chip" data-filter="completed">✅ Completed</button>
+    </div>
+
+    <!-- Mission Cards -->
+    <div class="grid-3 gap-lg" id="missions-grid">
+
+      <!-- Mission 1 -->
+      <div class="mission-card" data-difficulty="easy" data-id="plastic_free">
+        <div class="mission-banner"></div>
+        <div class="mission-body">
+          <div class="mission-head">
+            <div>
+              <div class="mission-title">🛍️ Plastic-Free Day</div>
+              <div class="mission-desc">Go an entire day without using single-use plastic. Take a photo of your eco alternatives.</div>
+            </div>
+            <div class="mission-icon-wrap">🛍️</div>
+          </div>
+          <div class="mission-meta">
+            <div class="mission-status-badge status-completed">✅ Completed</div>
+            <div class="badge badge-green">Easy</div>
+            <div class="mission-xp">⚡ 150 XP</div>
+          </div>
+          <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" style="width:100%"></div></div>
+          <div style="font-size:0.75rem;color:var(--clr-primary);margin-top:4px">✓ Submitted & Verified</div>
+        </div>
+      </div>
+
+      <!-- Mission 2 -->
+      <div class="mission-card" data-difficulty="easy" data-id="tree_walk">
+        <div class="mission-banner"></div>
+        <div class="mission-body">
+          <div class="mission-head">
+            <div>
+              <div class="mission-title">🚶 Green Commute</div>
+              <div class="mission-desc">Walk, cycle, or use public transport instead of a personal car for 3 consecutive days.</div>
+            </div>
+            <div class="mission-icon-wrap">🚶</div>
+          </div>
+          <div class="mission-meta">
+            <div class="mission-status-badge status-pending">⏳ In Review</div>
+            <div class="badge badge-green">Easy</div>
+            <div class="mission-xp">⚡ 120 XP</div>
+          </div>
+          <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" style="width:66%"></div></div>
+          <div style="font-size:0.75rem;color:var(--clr-gold);margin-top:4px">Day 2 of 3 complete · Pending verification</div>
+        </div>
+      </div>
+
+      <!-- Mission 3 -->
+      <div class="mission-card" data-difficulty="medium" data-id="plant_tree">
+        <div class="mission-banner medium"></div>
+        <div class="mission-body">
+          <div class="mission-head">
+            <div>
+              <div class="mission-title">🌳 Plant a Tree</div>
+              <div class="mission-desc">Plant a tree or sapling in your community. Document the process with photos from planting to growth.</div>
+            </div>
+            <div class="mission-icon-wrap" style="background:rgba(245,158,11,0.12)">🌳</div>
+          </div>
+          <div class="mission-meta">
+            <div class="mission-status-badge status-locked">🔓 Start Mission</div>
+            <div class="badge badge-gold">Medium</div>
+            <div class="mission-xp">⚡ 200 XP</div>
+          </div>
+          <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" id="plant-tree-progress" style="width:0%"></div></div>
+          <button class="btn btn-primary w-full" style="margin-top:12px;justify-content:center" onclick="openMissionModal('plant_tree')">
+            🌱 Start This Mission
+          </button>
+        </div>
+      </div>
+
+      <!-- Mission 4 -->
+      <div class="mission-card" data-difficulty="medium" data-id="energy_audit">
+        <div class="mission-banner medium"></div>
+        <div class="mission-body">
+          <div class="mission-head">
+            <div>
+              <div class="mission-title">⚡ Energy Audit</div>
+              <div class="mission-desc">Conduct a home energy audit. Identify 5 ways to reduce consumption and implement 2 of them.</div>
+            </div>
+            <div class="mission-icon-wrap" style="background:rgba(245,158,11,0.12)">⚡</div>
+          </div>
+          <div class="mission-meta">
+            <div class="mission-status-badge status-locked">🔓 Start Mission</div>
+            <div class="badge badge-gold">Medium</div>
+            <div class="mission-xp">⚡ 175 XP</div>
+          </div>
+          <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" style="width:0%"></div></div>
+          <button class="btn btn-primary w-full" style="margin-top:12px;justify-content:center" onclick="openMissionModal('energy_audit')">
+            ⚡ Start This Mission
+          </button>
+        </div>
+      </div>
+
+      <!-- Mission 5 -->
+      <div class="mission-card" data-difficulty="hard" data-id="composting">
+        <div class="mission-banner hard"></div>
+        <div class="mission-body">
+          <div class="mission-head">
+            <div>
+              <div class="mission-title">🌱 Start Composting</div>
+              <div class="mission-desc">Set up a composting system at home or school. Track what you compost for 2 weeks to show habit formation.</div>
+            </div>
+            <div class="mission-icon-wrap" style="background:var(--clr-accent-dim)">🌱</div>
+          </div>
+          <div class="mission-meta">
+            <div class="mission-status-badge status-locked">🔓 Start Mission</div>
+            <div class="badge badge-purple">Hard</div>
+            <div class="mission-xp">⚡ 300 XP</div>
+          </div>
+          <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" id="compost-progress" style="width:0%"></div></div>
+          <button class="btn btn-accent w-full" style="margin-top:12px;justify-content:center" onclick="openMissionModal('composting')">
+            🌱 Start This Mission
+          </button>
+        </div>
+      </div>
+
+      <!-- Mission 6 -->
+      <div class="mission-card" data-difficulty="hard" data-id="beach_cleanup">
+        <div class="mission-banner hard"></div>
+        <div class="mission-body">
+          <div class="mission-head">
+            <div>
+              <div class="mission-title">🏖️ Organize a Cleanup</div>
+              <div class="mission-desc">Organize or participate in a community/beach cleanup event. Document with team photos and waste collected.</div>
+            </div>
+            <div class="mission-icon-wrap" style="background:var(--clr-accent-dim)">🏖️</div>
+          </div>
+          <div class="mission-meta">
+            <div class="mission-status-badge status-locked">🔓 Start Mission</div>
+            <div class="badge badge-purple">Hard</div>
+            <div class="mission-xp">⚡ 350 XP</div>
+          </div>
+          <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" style="width:0%"></div></div>
+          <button class="btn btn-accent w-full" style="margin-top:12px;justify-content:center" onclick="openMissionModal('beach_cleanup')">
+            🏖️ Start This Mission
+          </button>
+        </div>
+      </div>
+
+      <!-- Mission 7 -->
+      <div class="mission-card" data-difficulty="easy" data-id="recycle">
+        <div class="mission-banner" style="background:var(--clr-primary-dim)"></div>
+        <div class="mission-body">
+          <div class="mission-head">
+            <div>
+              <div class="mission-title">♻️ Recycle 10 Items</div>
+              <div class="mission-desc">Properly sort and recycle 10 items that would otherwise end up in the trash.</div>
+            </div>
+            <div class="mission-icon-wrap" style="background:var(--bg-elevated)">♻️</div>
+          </div>
+          <div class="mission-meta">
+            <div class="mission-status-badge status-locked">🔓 Start Mission</div>
+            <div class="badge badge-green">Easy</div>
+            <div class="mission-xp">⚡ 100 XP</div>
+          </div>
+          <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" style="width:0%"></div></div>
+          <button class="btn btn-primary w-full" style="margin-top:12px;justify-content:center" onclick="openMissionModal('recycle')">
+            ♻️ Start This Mission
+          </button>
+        </div>
+      </div>
+
+      <!-- Mission 8 -->
+      <div class="mission-card" data-difficulty="medium" data-id="save_water">
+        <div class="mission-banner medium" style="background:rgba(59,130,246,0.1)"></div>
+        <div class="mission-body">
+          <div class="mission-head">
+            <div>
+              <div class="mission-title">💧 Save 50L of Water</div>
+              <div class="mission-desc">Find ways to save at least 50 liters of water today through simple habits.</div>
+            </div>
+            <div class="mission-icon-wrap" style="background:rgba(59,130,246,0.12)">💧</div>
+          </div>
+          <div class="mission-meta">
+            <div class="mission-status-badge status-locked">🔓 Start Mission</div>
+            <div class="badge badge-gold">Medium</div>
+            <div class="mission-xp">⚡ 150 XP</div>
+          </div>
+          <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" style="width:0%"></div></div>
+          <button class="btn btn-primary w-full" style="margin-top:12px;justify-content:center" onclick="openMissionModal('save_water')">
+            💧 Start This Mission
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Impact Summary -->
+    <div class="card" style="margin-top:32px;background:linear-gradient(135deg,rgba(0,200,150,0.08),rgba(124,58,237,0.08));border-color:rgba(0,200,150,0.2)">
+      <div class="chart-title" style="margin-bottom:16px">🌍 Your Mission Impact</div>
+      <div class="grid-4 gap-md">
+        <div style="text-align:center;padding:16px;background:var(--bg-elevated);border-radius:var(--radius-md)">
+          <div style="font-size:2rem;margin-bottom:4px">🛍️</div>
+          <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--clr-primary)">1.8kg</div>
+          <div style="font-size:0.75rem;color:var(--text-muted)">Plastic Avoided</div>
+        </div>
+        <div style="text-align:center;padding:16px;background:var(--bg-elevated);border-radius:var(--radius-md)">
+          <div style="font-size:2rem;margin-bottom:4px">🌫️</div>
+          <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--clr-primary)">7.4kg</div>
+          <div style="font-size:0.75rem;color:var(--text-muted)">CO₂ Offset</div>
+        </div>
+        <div style="text-align:center;padding:16px;background:var(--bg-elevated);border-radius:var(--radius-md)">
+          <div style="font-size:2rem;margin-bottom:4px">⚡</div>
+          <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--clr-primary)">12kWh</div>
+          <div style="font-size:0.75rem;color:var(--text-muted)">Energy Saved</div>
+        </div>
+        <div style="text-align:center;padding:16px;background:var(--bg-elevated);border-radius:var(--radius-md)">
+          <div style="font-size:2rem;margin-bottom:4px">🚶</div>
+          <div style="font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:var(--clr-primary)">2</div>
+          <div style="font-size:0.75rem;color:var(--text-muted)">Green Commutes</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- MISSION DETAIL MODAL -->
+<div class="modal-overlay hidden" id="mission-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div id="modal-mission-title" style="font-weight:700;font-size:1.1rem">Plant a Tree 🌳</div>
+        <div style="font-size:0.8125rem;color:var(--text-muted)" id="modal-mission-subtitle">Medium difficulty · 200 XP</div>
+      </div>
+      <button class="modal-close" onclick="closeMissionModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="modal-mission-desc" style="color:var(--text-secondary);font-size:0.9375rem;margin-bottom:20px">
+        Plant a tree or sapling in your community. Document the process with photos.
+      </div>
+
+      <!-- Steps -->
+      <div style="margin-bottom:20px">
+        <div style="font-weight:600;margin-bottom:12px;font-size:0.9rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted)">Mission Steps</div>
+        <div id="modal-steps" style="display:flex;flex-direction:column;gap:8px"></div>
+      </div>
+
+      <!-- Photo Upload -->
+      <div style="margin-bottom:16px">
+        <div style="font-weight:600;margin-bottom:8px">📸 Upload Proof</div>
+        <div class="mission-upload-area" id="upload-area" onclick="document.getElementById('file-input').click()">
+          <div id="upload-preview">
+            <div style="font-size:2.5rem;margin-bottom:8px">📷</div>
+            <div style="font-weight:600;color:var(--text-secondary)">Click to upload photo/video</div>
+            <div style="font-size:0.8125rem;color:var(--text-muted);margin-top:4px">JPG, PNG, MP4 · Max 10MB</div>
+          </div>
+        </div>
+        <input type="file" id="file-input" accept="image/*,video/*" style="display:none" onchange="handleFileUpload(event)">
+      </div>
+
+      <!-- Notes -->
+      <div>
+        <div style="font-weight:600;margin-bottom:8px">📝 Notes (optional)</div>
+        <textarea id="mission-notes" placeholder="Describe what you did, where you did it, any challenges..." style="width:100%;height:80px;background:var(--bg-elevated);border:1px solid var(--border-default);border-radius:var(--radius-md);padding:12px;color:var(--text-primary);font-size:0.875rem;resize:none;outline:none;font-family:inherit"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeMissionModal()">Cancel</button>
+      <button class="btn btn-primary" id="submit-mission-btn" onclick="submitMission()">Submit Mission 🚀</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
+<script>Auth.guard();</script>
+<script>
+const MISSIONS_DATA = {
+  plant_tree: {
+    title: '🌳 Plant a Tree',
+    subtitle: 'Medium difficulty · 200 XP',
+    desc: 'Plant a tree or sapling in your community. Document the process from finding a spot, digging, planting, to watering. This mission has a lasting positive impact!',
+    xp: 200,
+    steps: ['Find a suitable location for planting', 'Obtain a native tree sapling', 'Plant the sapling with proper soil preparation', 'Water and stake the tree', 'Take before, during, and after photos']
+  },
+  energy_audit: {
+    title: '⚡ Energy Audit',
+    subtitle: 'Medium difficulty · 175 XP',
+    desc: 'Conduct a home energy audit to identify and reduce your household energy consumption. Document your findings and the changes you implement.',
+    xp: 175,
+    steps: ['Walk through your home and list all electrical devices', 'Check for energy leaks (windows, doors, insulation)', 'Identify 5+ improvement opportunities', 'Implement at least 2 changes', 'Document energy savings before & after']
+  },
+  composting: {
+    title: '🌱 Start Composting',
+    subtitle: 'Hard difficulty · 300 XP',
+    desc: 'Set up a composting system and track your progress for 2 weeks. This significantly reduces organic waste from landfills and creates nutrient-rich soil.',
+    xp: 300,
+    steps: ['Set up a compost bin or pile', 'Learn what can/cannot be composted', 'Start collecting kitchen scraps', 'Maintain moisture and turning schedule', 'Track 14 days of composting with photos']
+  },
+  beach_cleanup: {
+    title: '🏖️ Organize Community Cleanup',
+    subtitle: 'Hard difficulty · 350 XP',
+    desc: 'Organize or actively participate in a community cleanup event. Rally friends, family, or classmates to join you and document the collective impact.',
+    xp: 350,
+    steps: ['Choose a location (beach, park, neighborhood)', 'Gather supplies (gloves, bags, etc.)', 'Recruit at least 3 participants', 'Conduct the cleanup event (min 1 hour)', 'Document waste collected and team photo']
+  },
+  recycle: {
+    title: '♻️ Recycle 10 Items',
+    subtitle: 'Easy difficulty · 100 XP',
+    desc: 'Properly sort and recycle 10 items that would otherwise end up in the trash (plastic bottles, cardboard, cans).',
+    xp: 100,
+    steps: ['Identify 10 recyclable items', 'Clean them if necessary', 'Sort them into the correct bins', 'Take a photo of your sorted recycling']
+  },
+  save_water: {
+    title: '💧 Save 50L of Water',
+    subtitle: 'Medium difficulty · 150 XP',
+    desc: 'Find ways to save at least 50 liters of water today. (e.g. shorter showers, fix a leak, collect rainwater)',
+    xp: 150,
+    steps: ['Identify water-saving methods', 'Implement them over one day', 'Estimate the liters saved', 'Write down your methods in notes']
+  }
+};
+
+let activeMission = null;
+let uploadedFile = null;
+
+function openMissionModal(id) {
+  const mission = MISSIONS_DATA[id];
+  if (!mission) return;
+  activeMission = id;
+  uploadedFile = null;
+
+  document.getElementById('modal-mission-title').textContent = mission.title;
+  document.getElementById('modal-mission-subtitle').textContent = mission.subtitle;
+  document.getElementById('modal-mission-desc').textContent = mission.desc;
+  document.getElementById('upload-preview').innerHTML = `
+    <div style="font-size:2.5rem;margin-bottom:8px">📷</div>
+    <div style="font-weight:600;color:var(--text-secondary)">Click to upload photo/video</div>
+    <div style="font-size:0.8125rem;color:var(--text-muted);margin-top:4px">JPG, PNG, MP4 · Max 10MB</div>
+  `;
+
+  const stepsEl = document.getElementById('modal-steps');
+  stepsEl.innerHTML = mission.steps.map((step, i) => `
+    <div style="display:flex;align-items:flex-start;gap:10px;padding:10px;background:var(--bg-elevated);border-radius:var(--radius-md)">
+      <div style="width:22px;height:22px;border-radius:50%;background:var(--clr-primary-dim);border:1px solid rgba(0,200,150,0.3);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--clr-primary);flex-shrink:0">${i+1}</div>
+      <span style="font-size:0.875rem;color:var(--text-secondary)">${step}</span>
+    </div>
+  `).join('');
+
+  document.getElementById('mission-notes').value = '';
+  document.getElementById('mission-modal').classList.remove('hidden');
+}
+
+function closeMissionModal() {
+  document.getElementById('mission-modal').classList.add('hidden');
+  activeMission = null;
+}
+
+function handleFileUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  uploadedFile = file;
+
+  const preview = document.getElementById('upload-preview');
+  if (file.type.startsWith('image/')) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      preview.innerHTML = `
+        <img src="${e.target.result}" style="max-height:180px;border-radius:var(--radius-md);margin:0 auto" alt="proof">
+        <div style="margin-top:8px;font-size:0.8125rem;color:var(--clr-primary)">✓ ${file.name} uploaded</div>
+      `;
+    };
+    reader.readAsDataURL(file);
+  } else {
+    preview.innerHTML = `
+      <div style="font-size:2rem">🎬</div>
+      <div style="font-weight:600;color:var(--clr-primary);margin-top:8px">✓ ${file.name} ready</div>
+      <div style="font-size:0.8125rem;color:var(--text-muted)">Video proof uploaded</div>
+    `;
+  }
+}
+
+function submitMission() {
+  if (!uploadedFile) {
+    EQ.showToast('warning', 'Proof Required', 'Please upload a photo or video as proof of your mission.');
+    return;
+  }
+
+  const btn = document.getElementById('submit-mission-btn');
+  btn.textContent = '⏳ Submitting...';
+  btn.disabled = true;
+
+  const mission = MISSIONS_DATA[activeMission];
+
+  setTimeout(() => {
+    closeMissionModal();
+    EQ.awardXP(mission.xp, `${mission.title} submitted! Under review 🌍`);
+
+    const s = EQ.getState();
+    const patch = {
+      missionsCompleted: s.missionsCompleted + 1,
+      completedMissions: [...(s.completedMissions || []), activeMission],
+      co2Saved: parseFloat((s.co2Saved + 1.5).toFixed(1)),
+    };
+    if (activeMission === 'recycle') patch.itemsRecycled = (s.itemsRecycled || 0) + 10;
+    if (activeMission === 'save_water') patch.waterSaved = (s.waterSaved || 0) + 50;
+    
+    EQ.setState(patch);
+
+    EQ.triggerConfetti(40);
+    EQ.showToast('success', '🎉 Mission Submitted!', 'Your proof is under review. XP will be confirmed shortly.');
+    btn.textContent = 'Submit Mission 🚀';
+    btn.disabled = false;
+  }, 1500);
+}
+
+// Filter logic
+document.querySelectorAll('#mission-filters .chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('#mission-filters .chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    const filter = chip.dataset.filter;
+    document.querySelectorAll('#missions-grid .mission-card').forEach(card => {
+      if (filter === 'all') { card.style.display = ''; return; }
+      if (filter === 'completed') {
+        const status = card.querySelector('.status-completed');
+        card.style.display = status ? '' : 'none';
+      } else {
+        card.style.display = card.dataset.difficulty === filter ? '' : 'none';
+      }
+    });
+  });
+});
+
+// Close modal on overlay click
+document.getElementById('mission-modal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('mission-modal')) closeMissionModal();
+});
+</script>
+</body>
+</html>

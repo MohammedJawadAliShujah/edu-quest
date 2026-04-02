@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Badges & Achievements – EcoQuest</title>
+  <meta name="description" content="Earn and showcase your EcoQuest achievements — from first quiz to EcoHero status.">
+  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo"><div class="nav-logo-icon">🌿</div>Eco<span>Quest</span></a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">🏠 Home</a>
+      <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+      <a href="quizzes.html" class="nav-link">📝 Quizzes</a>
+      <a href="missions.html" class="nav-link">🌍 Missions</a>
+      <a href="leaderboard.html" class="nav-link">🏆 Leaderboard</a>
+      <a href="badges.html" class="nav-link active">🏅 Badges</a>
+      <a href="recommendations.html" class="nav-link">🤖 AI Tips</a>
+      <a href="game.html" class="nav-link" style="color:var(--clr-gold);border:1px solid rgba(245,158,11,0.25);border-radius:var(--radius-full);padding:6px 14px">🎮 Game</a>
+    </div>
+    <div class="nav-right">
+      <div class="nav-xp-area">
+        <div class="nav-xp-label"><span id="nav-xp-val">720 XP</span><span id="nav-xp-next">to Tree</span></div>
+        <div class="nav-xp-bar"><div class="nav-xp-fill" id="nav-xp-fill" style="width:40%"></div></div>
+      </div>
+      <div class="nav-level-badge"><span id="nav-level-name">🌿 Sprout</span></div>
+      <div class="nav-avatar">EW</div>
+      <button onclick="Auth.logout()" title="Logout" style="background:transparent;border:1px solid var(--border-subtle);border-radius:var(--radius-full);padding:6px 12px;color:var(--text-muted);font-size:0.75rem;cursor:pointer;transition:all 0.2s;font-family:var(--font-sans)" onmouseover="this.style.color='var(--clr-danger)';this.style.borderColor='var(--clr-danger)'" onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border-subtle)'">⏻ Logout</button>
+    </div>
+    <button class="nav-hamburger" id="nav-hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+<div class="mobile-nav-drawer" id="mobile-nav-drawer">
+  <a href="index.html" class="nav-logo"><div class="nav-logo-icon">🌿</div>Eco<span style="color:var(--clr-primary)">Quest</span></a>
+  <div class="mobile-nav-links">
+    <a href="index.html" class="mobile-nav-link">🏠 Home</a>
+    <a href="dashboard.html" class="mobile-nav-link">📊 Dashboard</a>
+    <a href="quizzes.html" class="mobile-nav-link">📝 Quizzes</a>
+    <a href="missions.html" class="mobile-nav-link">🌍 Missions</a>
+    <a href="leaderboard.html" class="mobile-nav-link">🏆 Leaderboard</a>
+    <a href="badges.html" class="mobile-nav-link active">🏅 Badges</a>
+    <a href="recommendations.html" class="mobile-nav-link">🤖 AI Tips</a>
+    <a href="game.html" class="mobile-nav-link" style="color:var(--clr-gold)">🎮 Game</a>
+  </div>
+</div>
+
+<div class="page-wrapper">
+  <div class="container">
+
+    <div class="page-header">
+      <div class="page-title">🏅 Badges & Achievements</div>
+      <div class="page-subtitle">Showcase your environmental dedication</div>
+    </div>
+
+    <!-- Introduction Section -->
+    <div class="card" style="margin-bottom:24px;background:var(--bg-elevated);border-left:4px solid var(--clr-primary)">
+      <h3 style="margin-bottom:8px;display:flex;align-items:center;gap:8px;font-size:1.15rem">
+        <span>🌿</span> What are achievements?
+      </h3>
+      <p style="color:var(--text-secondary);line-height:1.6;font-size:0.95rem;margin:0">
+        Achievements on EcoQuest are milestones that celebrate your positive environmental impact. 
+        From taking your first quiz to becoming an EcoHero, every action brings you closer to a greener world. 
+        Track your progress, unlock new badges, and inspire your community!
+      </p>
+    </div>
+
+    <!-- Badge Stats -->
+    <div class="grid-4 gap-md" style="margin-bottom:32px">
+      <div class="stat-card">
+        <div class="stat-icon">🏅</div>
+        <div class="stat-value" id="earned-count">4</div>
+        <div class="stat-label">Badges Earned</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--bg-elevated)">🔒</div>
+        <div class="stat-value" id="locked-count">11</div>
+        <div class="stat-label">Yet to Unlock</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(245,158,11,0.12)">⚡</div>
+        <div class="stat-value" id="completion-pct">27<span style="font-size:1rem">%</span></div>
+        <div class="stat-label">Completion</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--clr-accent-dim)">👑</div>
+        <div class="stat-value">🌿</div>
+        <div class="stat-label">Rarest Badge</div>
+      </div>
+    </div>
+
+    <!-- Featured Earned Badges -->
+    <div class="card" style="margin-bottom:24px;background:linear-gradient(135deg,rgba(0,200,150,0.06),rgba(124,58,237,0.06));border-color:rgba(0,200,150,0.2)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div class="chart-title">🌟 Your Achievements</div>
+        <div class="badge badge-green" id="earned-badge-count">4 Earned</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px" id="earned-badges-grid"></div>
+    </div>
+
+    <!-- All Badges -->
+    <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <h3 style="font-size:1.1rem">All 15 Badges</h3>
+        <div class="flex gap-sm">
+          <button class="chip active" data-badge-filter="all" id="filter-all">All</button>
+          <button class="chip" data-badge-filter="earned" id="filter-earned">✅ Earned</button>
+          <button class="chip" data-badge-filter="locked" id="filter-locked">🔒 Locked</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px" id="all-badges-grid"></div>
+    </div>
+
+    <!-- Next Badge to Unlock -->
+    <div class="card" style="margin-top:32px">
+      <div class="chart-title" style="margin-bottom:16px">🎯 Next Badges to Unlock</div>
+      <div class="grid-3 gap-md" id="next-badges"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Badge Detail Modal -->
+<div class="modal-overlay hidden" id="badge-modal">
+  <div class="modal-box" style="max-width:400px">
+    <div class="modal-header">
+      <div style="font-weight:700">Badge Details</div>
+      <button class="modal-close" onclick="closeBadgeModal()">✕</button>
+    </div>
+    <div class="modal-body" style="text-align:center">
+      <div id="modal-badge-icon" style="font-size:4rem;margin-bottom:12px"></div>
+      <h3 id="modal-badge-name"></h3>
+      <p id="modal-badge-desc" style="margin:8px auto 16px;font-size:0.9375rem"></p>
+      <div id="modal-badge-status"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-primary w-full" onclick="closeBadgeModal()">Close</button></div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
+<script>Auth.guard();</script>
+<script>
+// Progress for locked badges shown as percentage
+const BADGE_PROGRESS = {
+  quiz5:        { value: 60, label: '3 of 5 quizzes' },
+  quiz_master:  { value: 40, label: '2 of 5 categories' },
+  perfect_score:{ value: 0,  label: 'Score 10/10' },
+  mission5:     { value: 40, label: '2 of 5 missions' },
+  streak7:      { value: 43, label: '3 of 7 days' },
+  xp1000:       { value: 72, label: '720 of 1000 XP' },
+  tree:         { value: 0,  label: 'Complete Plant a Tree mission' },
+  energy:       { value: 0,  label: '0 of 2 energy missions' },
+  share:        { value: 0,  label: 'Share with a friend' },
+  top3:         { value: 0,  label: 'Current rank: #5' },
+  co2:          { value: 74, label: '7.4 of 10kg CO₂' },
+  'recycle-50': { value: 24, label: '12 of 50 items' },
+  'water-100':  { value: 45, label: '45 of 100L' },
+  'energy-star':{ value: 30, label: '15 of 50 kWh' },
+  'social-butterfly': { value: 40, label: '2 of 5 shares' }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  const s = EQ.getState();
+  const BADGES = EQ.BADGES;
+  const earned = s.unlockedBadges || s.earnedBadges || [];
+  
+  if (s.itemsRecycled >= 10 && !earned.includes('recycle-10')) {
+    earned.push('recycle-10'); // Auto-grant new retro-active badge locally
+  }
+
+  const earnedCount = earned.length;
+  const totalCount = BADGES.length;
+  const lockedCount = totalCount - earnedCount;
+  const pct = Math.round((earnedCount / totalCount) * 100);
+
+  document.getElementById('earned-count').textContent = earnedCount;
+  document.getElementById('locked-count').textContent = lockedCount;
+  document.getElementById('completion-pct').innerHTML = pct + '<span style="font-size:1rem">%</span>';
+  document.getElementById('earned-badge-count').textContent = earnedCount + ' Earned';
+
+  const colorMap = { gold: 'gold', green: 'green', purple: 'purple', silver: 'silver', blue: 'blue' };
+
+  function renderBadgeCard(badge, container, mini = false) {
+    const isEarned = earned.includes(badge.id);
+    const prog = BADGE_PROGRESS[badge.id];
+    const div = document.createElement('div');
+    div.className = `badge-achievement ${isEarned ? 'earned' : 'locked'}`;
+    div.dataset.earned = isEarned;
+
+    div.innerHTML = `
+      <div class="badge-shine"></div>
+      <div class="badge-icon-wrap ${colorMap[badge.color] || 'green'}">
+        ${badge.icon}
+        ${isEarned ? '<div class="badge-earned-check">✓</div>' : ''}
+      </div>
+      <div class="badge-name">${badge.name}</div>
+      <div class="badge-desc">${badge.desc}</div>
+      ${!isEarned && prog ? `
+        <div class="badge-progress-mini" style="margin-top:4px">
+          <div class="badge-progress-mini-fill" style="width:${prog.value}%"></div>
+        </div>
+        <div style="font-size:0.65rem;color:var(--text-muted);margin-top:3px">${prog.label}</div>
+      ` : ''}
+      ${isEarned ? '<div class="badge badge-green" style="margin-top:4px;font-size:0.65rem">Earned ✓</div>' : ''}
+    `;
+
+    div.addEventListener('click', () => showBadgeModal(badge, isEarned, prog));
+    container.appendChild(div);
+  }
+
+  // Earned section
+  const earnedGrid = document.getElementById('earned-badges-grid');
+  BADGES.filter(b => earned.includes(b.id)).forEach(b => renderBadgeCard(b, earnedGrid));
+
+  // All badges
+  const allGrid = document.getElementById('all-badges-grid');
+  BADGES.forEach(b => renderBadgeCard(b, allGrid));
+
+  // Filter chips
+  document.querySelectorAll('[data-badge-filter]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('[data-badge-filter]').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const filter = chip.dataset.badgeFilter;
+      allGrid.querySelectorAll('.badge-achievement').forEach(card => {
+        if (filter === 'all') { card.style.display = ''; return; }
+        const isEarned = card.dataset.earned === 'true';
+        card.style.display = (filter === 'earned' && isEarned) || (filter === 'locked' && !isEarned) ? '' : 'none';
+      });
+    });
+  });
+
+  // Next badges to unlock
+  const nextContainer = document.getElementById('next-badges');
+  const locked = BADGES.filter(b => !earned.includes(b.id));
+  const withProg = locked.filter(b => BADGE_PROGRESS[b.id] && BADGE_PROGRESS[b.id].value > 0)
+    .sort((a, b) => (BADGE_PROGRESS[b.id]?.value || 0) - (BADGE_PROGRESS[a.id]?.value || 0))
+    .slice(0, 3);
+
+  withProg.forEach(badge => {
+    const prog = BADGE_PROGRESS[badge.id];
+    const div = document.createElement('div');
+    div.style.cssText = 'padding:16px;background:var(--bg-elevated);border-radius:var(--radius-md);display:flex;flex-direction:column;gap:8px';
+    div.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="font-size:1.75rem">${badge.icon}</div>
+        <div>
+          <div style="font-weight:600;font-size:0.9rem">${badge.name}</div>
+          <div style="font-size:0.75rem;color:var(--text-muted)">${prog.label}</div>
+        </div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width:${prog.value}%"></div>
+      </div>
+      <div style="font-size:0.75rem;color:var(--clr-primary);font-weight:600">${prog.value}% complete</div>
+    `;
+    nextContainer.appendChild(div);
+  });
+});
+
+function showBadgeModal(badge, isEarned, prog) {
+  document.getElementById('modal-badge-icon').textContent = badge.icon;
+  document.getElementById('modal-badge-name').textContent = badge.name;
+  document.getElementById('modal-badge-desc').textContent = badge.desc;
+
+  const statusEl = document.getElementById('modal-badge-status');
+  if (isEarned) {
+    statusEl.innerHTML = '<div class="badge badge-green" style="justify-content:center;padding:8px 20px;font-size:0.875rem">✅ Badge Earned!</div>';
+  } else if (prog) {
+    statusEl.innerHTML = `
+      <div style="margin-bottom:8px;font-size:0.875rem;color:var(--text-secondary)">${prog.label}</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:${prog.value}%"></div></div>
+      <div style="font-size:0.8125rem;color:var(--clr-primary);margin-top:6px">${prog.value}% progress</div>
+    `;
+  } else {
+    statusEl.innerHTML = '<div class="badge badge-purple" style="justify-content:center;padding:8px 20px">🔒 Locked</div>';
+  }
+
+  document.getElementById('badge-modal').classList.remove('hidden');
+}
+
+function closeBadgeModal() {
+  document.getElementById('badge-modal').classList.add('hidden');
+}
+
+document.getElementById('badge-modal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('badge-modal')) closeBadgeModal();
+});
+</script>
+</body>
+</html>

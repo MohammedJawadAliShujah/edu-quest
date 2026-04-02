@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jungle Relics: Reborn – EcoQuest Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0fcb93;
+            --dark-glass: rgba(10, 20, 15, 0.75);
+            --light-text: #ffffff;
+            --danger: #ff4d4d;
+            --nav-height: 68px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: #000;
+            font-family: 'Inter', sans-serif;
+            color: var(--light-text);
+            user-select: none;
+            overflow: hidden;
+        }
+
+        /* ── Back nav bar ── */
+        #game-nav {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--nav-height);
+            background: rgba(10, 20, 15, 0.9);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(15, 203, 147, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 600;
+            pointer-events: all;
+        }
+        #game-nav a {
+            display: flex; align-items: center; gap: 8px;
+            color: #ccc; text-decoration: none;
+            font-size: 0.9rem; font-weight: 500;
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.2s;
+        }
+        #game-nav a:hover { color: var(--primary); border-color: var(--primary); }
+        #game-nav .nav-title {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700; font-size: 1.15rem;
+            color: var(--primary); letter-spacing: 0.03em;
+        }
+        #game-nav .nav-score {
+            font-size: 0.85rem; color: #888;
+        }
+        #game-nav .nav-score span { color: var(--primary); font-weight: 700; }
+
+        canvas {
+            display: block;
+            position: fixed;
+            top: var(--nav-height);
+            left: 0;
+            width: 100vw;
+            height: calc(100vh - var(--nav-height));
+        }
+
+        /* ── Overlay containers ── */
+        .fullscreen-overlay {
+            position: fixed;
+            top: var(--nav-height); left: 0;
+            width: 100%;
+            height: calc(100% - var(--nav-height));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 300;
+        }
+        .menu-screen {
+            background: var(--dark-glass);
+            backdrop-filter: blur(10px);
+            z-index: 400;
+        }
+        .menu-box {
+            text-align: center;
+            padding: 50px 60px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+        .menu-box h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            margin: 0 0 10px;
+            background: linear-gradient(90deg, #fff, var(--primary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .menu-box p { font-size: 1.05rem; color: #ccc; margin: 8px 0; }
+        .menu-box .subtitle { font-size: 0.875rem; color: #666; margin-bottom: 28px; }
+
+        /* ── Buttons ── */
+        .btn {
+            display: inline-block;
+            padding: 13px 36px;
+            background: var(--primary);
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+            box-shadow: 0 0 16px rgba(15, 203, 147, 0.3);
+        }
+        .btn:hover { background: #12e3a5; transform: scale(1.04); box-shadow: 0 0 28px rgba(15, 203, 147, 0.5); }
+        .btn:active { transform: scale(0.98); }
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            box-shadow: none;
+        }
+        .btn-outline:hover { background: rgba(15, 203, 147, 0.1); transform: scale(1.03); box-shadow: none; }
+
+        /* ── HUD ── */
+        #hud {
+            position: fixed;
+            top: var(--nav-height); left: 0;
+            width: 100%; height: calc(100% - var(--nav-height));
+            pointer-events: none;
+            z-index: 100;
+        }
+        .hud-card {
+            display: inline-block;
+            background: var(--dark-glass);
+            backdrop-filter: blur(6px);
+            padding: 12px 22px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .hud-top { position: absolute; top: 16px; left: 16px; }
+        .hud-title { font-family:'Outfit',sans-serif; font-weight:700; font-size:1.3rem; color:var(--primary); }
+        .hud-sub { font-size:0.9rem; color:#aaa; margin-top:2px; }
+
+        #crosshair {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 6px; height: 6px;
+            background: rgba(255,255,255,0.85);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            filter: drop-shadow(0 0 3px rgba(255,255,255,0.8));
+        }
+        /* outer ring */
+        #crosshair::before {
+            content: '';
+            position: absolute;
+            inset: -7px;
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 50%;
+        }
+
+        #interact-prompt {
+            position: absolute;
+            bottom: 18%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.85);
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.08em;
+            display: none;
+            border: 1px solid var(--primary);
+            animation: pulseHint 1.5s infinite alternate;
+        }
+        @keyframes pulseHint {
+            from { box-shadow: 0 0 6px rgba(15, 203, 147, 0.2); }
+            to   { box-shadow: 0 0 22px rgba(15, 203, 147, 0.7); }
+        }
+
+        /* ── Minimap ── */
+        #minimap-container {
+            position: absolute;
+            top: 16px; right: 16px;
+            width: 180px; height: 180px;
+            background: rgba(10, 20, 15, 0.85);
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .minimap-marker {
+            position: absolute;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        #player-marker { background: #fff; box-shadow: 0 0 10px #fff; z-index: 10; }
+        .artifact-marker { background: #ffaa00; box-shadow: 0 0 8px #ffaa00; }
+        .artifact-marker.solved { background: var(--primary); box-shadow: 0 0 10px var(--primary); }
+
+        /* ── Riddle Modal ── */
+        #riddle-modal { display: none; z-index: 500; }
+        .riddle-box {
+            width: 460px;
+            padding: 40px;
+            background: rgba(10, 22, 18, 0.97);
+            border-radius: 18px;
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 40px rgba(15, 203, 147, 0.15);
+            text-align: center;
+        }
+        .riddle-box h2 {
+            font-family: 'Outfit', sans-serif;
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin: 0 0 8px;
+        }
+        .riddle-num { font-size: 0.8rem; color: #666; margin-bottom: 18px; letter-spacing: 0.05em; }
+        #riddle-text {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            font-style: italic;
+            color: #ddd;
+        }
+        #riddle-input {
+            width: 85%;
+            padding: 14px;
+            font-size: 1rem;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 8px;
+            outline: none;
+            transition: border 0.3s;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+            margin-bottom: 14px;
+        }
+        #riddle-input:focus { border-color: var(--primary); }
+        #riddle-feedback {
+            margin-top: 14px;
+            min-height: 22px;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+        .feedback-error { color: var(--danger); animation: shake 0.4s; display: inline-block; }
+        .feedback-success { color: var(--primary); }
+        @keyframes shake {
+            0%,100% { transform: translateX(0); }
+            25%,75%  { transform: translateX(-6px); }
+            50%      { transform: translateX(6px); }
+        }
+
+        /* ── Win Screen ── */
+        #win-screen { display: none; z-index: 600; }
+        .win-box { text-align: center; padding: 60px; border-radius: 20px; background: rgba(255,255,255,0.04); border: 1px solid rgba(15,203,147,0.3); box-shadow: 0 0 60px rgba(15,203,147,0.15); }
+        .win-box h1 { font-family:'Outfit',sans-serif; font-size:3rem; color:var(--primary); margin-bottom:12px; }
+
+        /* ── Ambient ── */
+        #vignette {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse at center, transparent 65%, rgba(0,0,0,0.15) 100%);
+            pointer-events: none;
+            z-index: 10;
+        }
+    </style>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body>
+
+<!-- ── Back Navigation Bar ── -->
+<nav id="game-nav">
+    <a href="index.html">← Back to EcoQuest</a>
+    <div class="nav-title">🌿 Jungle Relics: Reborn</div>
+    <div class="nav-score">Artifacts: <span id="nav-score">0</span> / 7</div>
+</nav>
+
+<!-- ── Vignette ── -->
+<div id="vignette"></div>
+
+<!-- ── HUD ── -->
+<div id="hud">
+    <div class="hud-card hud-top">
+        <div class="hud-title">🗿 Jungle Relics</div>
+        <div class="hud-sub">Collected: <strong id="hud-count" style="color:var(--primary)">0</strong> / 7 Artifacts</div>
+    </div>
+    <div id="crosshair"></div>
+    <div id="interact-prompt">Press [ E ] to Inspect Artifact</div>
+    <div id="minimap-container">
+        <div id="player-marker" class="minimap-marker"></div>
+    </div>
+</div>
+
+<!-- ── Start / Pause Screen ── -->
+<div id="pause-screen" class="fullscreen-overlay menu-screen">
+    <div class="menu-box">
+        <h1>Jungle Relics: Reborn</h1>
+        <p>Venture through an ancient jungle and find 7 hidden relics.</p>
+        <p>Solve each relic's riddle to unlock its power.</p>
+        <p class="subtitle">W A S D to move &nbsp;·&nbsp; Mouse to look &nbsp;·&nbsp; Space to jump &nbsp;·&nbsp; E to interact</p>
+        <button id="btn-start" class="btn">▶ Click to Start / Resume</button>
+        <br><br>
+        <a href="index.html" style="color:#555;font-size:0.85rem;text-decoration:none">← Return to EcoQuest Platform</a>
+    </div>
+</div>
+
+<!-- ── Riddle Modal ── -->
+<div id="riddle-modal" class="fullscreen-overlay">
+    <div class="riddle-box">
+        <h2>🗿 Ancient Riddle</h2>
+        <div class="riddle-num" id="riddle-num">Artifact 1 of 7</div>
+        <p id="riddle-text"></p>
+        <div id="riddle-input-group">
+            <input type="text" id="riddle-input" placeholder="Your answer..." autocomplete="off">
+            <br>
+            <button id="btn-submit" class="btn">Submit Answer</button>
+        </div>
+        <p id="riddle-feedback"></p>
+        <button id="btn-continue" class="btn" style="display:none;margin-top:12px">▶ Continue Exploring</button>
+    </div>
+</div>
+
+<!-- ── Win Screen ── -->
+<div id="win-screen" class="fullscreen-overlay menu-screen">
+    <div class="win-box">
+        <div style="font-size:4rem;margin-bottom:16px">🏆</div>
+        <h1>Jungle Conquered!</h1>
+        <p style="color:#aaa;margin:12px 0 28px">All 7 relics activated. The jungle's ancient magic is yours.</p>
+        <div style="display:flex;gap:14px;justify-content:center">
+            <button class="btn" onclick="location.reload()">🔄 Play Again</button>
+            <a href="index.html" class="btn btn-outline" style="text-decoration:none;display:inline-flex;align-items:center">← EcoQuest Home</a>
+        </div>
+    </div>
+</div>
+
+<!-- ── Game Script ── -->
+<script type="module">
+    import * as THREE from 'three';
+    import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+    import { SimplexNoise } from 'three/addons/math/SimplexNoise.js';
+
+    /* ─ Config ─ */
+    const CONFIG = {
+        TERRAIN_SIZE: 1500,
+        TERRAIN_SEGMENTS: 150,
+        WATER_LEVEL: -10,
+        NUM_TREES: 1400,
+        NUM_ARTIFACTS: 7,
+        INTERACT_RANGE: 30,
+        PLAYER_SPEED: 420.0,
+        GRAVITY: 900.0,
+        JUMP_FORCE: 310.0
+    };
+
+    const RIDDLES = [
+        { q: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?", a: "echo",     hint: "Bounces off canyon walls." },
+        { q: "What runs around the whole yard without moving?",                                                          a: "fence",    hint: "It encloses things." },
+        { q: "I have roots nobody sees, I am taller than trees, up, up I go, and yet I never grow. What am I?",         a: "mountain", hint: "A towering peak." },
+        { q: "I have lakes with no water, mountains with no stone, and cities with no buildings. What am I?",            a: "map",      hint: "It guides you." },
+        { q: "I fly without wings. I cry without eyes. Whenever I go, darkness flies. What am I?",                      a: "cloud",    hint: "Floats in the sky." },
+        { q: "What disappears as soon as you say its name?",                                                             a: "silence",  hint: "Shhhh…" },
+        { q: "The more of this there is, the less you see. What is it?",                                                 a: "darkness", hint: "Nighttime brings it." }
+    ];
+
+    /* ─ State ─ */
+    const STATE = { PLAYING: 0, PAUSED: 1, RIDDLE: 2, WON: 3 };
+    let currentState = STATE.PAUSED;
+    let artifactsScored = 0;
+    let activeArtifact = null;
+
+    /* ─ Three.js globals ─ */
+    let scene, camera, renderer, controls;
+    let prevTime = performance.now();
+    const velocity = new THREE.Vector3();
+    const direction = new THREE.Vector3();
+    let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false, canJump = false;
+
+    const noise = new SimplexNoise();
+    const artifacts = [];
+    let fireflies;
+
+    /* ─ UI refs ─ */
+    const UI = {
+        pauseOverlay:    document.getElementById('pause-screen'),
+        startBtn:        document.getElementById('btn-start'),
+        riddleModal:     document.getElementById('riddle-modal'),
+        riddleText:      document.getElementById('riddle-text'),
+        riddleNum:       document.getElementById('riddle-num'),
+        riddleInput:     document.getElementById('riddle-input'),
+        riddleInputGroup:document.getElementById('riddle-input-group'),
+        submitBtn:       document.getElementById('btn-submit'),
+        feedback:        document.getElementById('riddle-feedback'),
+        continueBtn:     document.getElementById('btn-continue'),
+        winScreen:       document.getElementById('win-screen'),
+        crosshair:       document.getElementById('crosshair'),
+        hudCount:        document.getElementById('hud-count'),
+        navScore:        document.getElementById('nav-score'),
+        interactPrompt:  document.getElementById('interact-prompt'),
+        minimap:         document.getElementById('minimap-container'),
+        playerMarker:    document.getElementById('player-marker')
+    };
+
+    /* ─ Init ─ */
+    function init() {
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87ceeb); // Light blue sky
+        scene.fog = new THREE.FogExp2(0x87ceeb, 0.002); // Clean daytime fog
+
+        const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-height'));
+        camera = new THREE.PerspectiveCamera(75, window.innerWidth / (window.innerHeight - navH), 0.5, 2000);
+        controls = new PointerLockControls(camera, document.body);
+        scene.add(controls.getObject());
+
+        // Lighting
+        scene.add(new THREE.AmbientLight(0xddeeff, 0.45)); // Soft sky ambient
+        const sun = new THREE.DirectionalLight(0xfffae6, 1.4); // Bright sunlight
+        sun.position.set(200, 500, 100);
+        scene.add(sun);
+        const fill = new THREE.DirectionalLight(0xaaccff, 0.35); // Sky bounce light
+        fill.position.set(-300, 200, -200);
+        scene.add(fill);
+
+        // Build world
+        buildTerrain();
+        buildWater();
+        buildTrees();
+        buildFireflies();
+        spawnArtifacts();
+
+        // Start position
+        const sY = getTerrainHeight(0, 0);
+        controls.getObject().position.set(0, Math.max(sY, CONFIG.WATER_LEVEL) + 15, 0);
+
+        // Renderer
+        renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+        renderer.setSize(window.innerWidth, window.innerHeight - navH);
+        renderer.domElement.style.top = navH + 'px';
+        document.body.appendChild(renderer.domElement);
+
+        setupEvents();
+        requestAnimationFrame(animate);
+    }
+
+    /* ─ Terrain ─ */
+    function getTerrainHeight(x, z) {
+        let y = noise.noise(x * 0.0015, z * 0.0015) * 80;
+        y += noise.noise(x * 0.005, z * 0.005) * 20;
+        return y - 10;
+    }
+
+    function buildTerrain() {
+        const geo = new THREE.PlaneGeometry(CONFIG.TERRAIN_SIZE, CONFIG.TERRAIN_SIZE, CONFIG.TERRAIN_SEGMENTS, CONFIG.TERRAIN_SEGMENTS);
+        geo.rotateX(-Math.PI / 2);
+        const pos = geo.attributes.position;
+        const cDeep = new THREE.Color(0x2a4e21), cMid = new THREE.Color(0x3f7831), cHigh = new THREE.Color(0x528742);
+        const colors = [];
+
+        for (let i = 0; i < pos.count; i++) {
+            const x = pos.getX(i), z = pos.getZ(i);
+            const y = getTerrainHeight(x, z);
+            pos.setY(i, y);
+            const vc = new THREE.Color();
+            if (y < 0) vc.copy(cDeep);
+            else if (y < 40) vc.copy(cMid);
+            else vc.copy(cHigh);
+            const n = (Math.random() - 0.5) * 0.06;
+            colors.push(vc.r + n, vc.g + n, vc.b + n);
+        }
+
+        geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+        geo.computeVertexNormals();
+        scene.add(new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1.0, flatShading: true })));
+    }
+
+    function buildWater() {
+        const geo = new THREE.PlaneGeometry(CONFIG.TERRAIN_SIZE, CONFIG.TERRAIN_SIZE);
+        geo.rotateX(-Math.PI / 2);
+        const water = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: 0x1f88a8, transparent: true, opacity: 0.65 }));
+        water.position.y = CONFIG.WATER_LEVEL;
+        scene.add(water);
+    }
+
+    function buildTrees() {
+        const trunkGeo = new THREE.CylinderGeometry(1, 2, 10, 5);
+        const leafGeo  = new THREE.TetrahedronGeometry(6, 1);
+        const trunks   = new THREE.InstancedMesh(trunkGeo, new THREE.MeshStandardMaterial({ color: 0x4a3020, roughness: 0.9 }), CONFIG.NUM_TREES);
+        const leaves   = new THREE.InstancedMesh(leafGeo,  new THREE.MeshStandardMaterial({ color: 0x356a25, roughness: 0.8, flatShading: true }), CONFIG.NUM_TREES);
+        const dummy    = new THREE.Object3D();
+        let count = 0;
+
+        while (count < CONFIG.NUM_TREES) {
+            const tx = (Math.random() - 0.5) * CONFIG.TERRAIN_SIZE;
+            const tz = (Math.random() - 0.5) * CONFIG.TERRAIN_SIZE;
+            if (Math.abs(tx) < 50 && Math.abs(tz) < 50) continue;
+            const ty = getTerrainHeight(tx, tz);
+            if (ty < CONFIG.WATER_LEVEL + 2) continue;
+            const sc = 1 + Math.random();
+
+            dummy.position.set(tx, ty + 5 * sc, tz);
+            dummy.rotation.set(0, Math.random() * Math.PI * 2, 0);
+            dummy.scale.setScalar(sc);
+            dummy.updateMatrix();
+            trunks.setMatrixAt(count, dummy.matrix);
+
+            dummy.position.set(tx, ty + 10 * sc + 2, tz);
+            dummy.updateMatrix();
+            leaves.setMatrixAt(count, dummy.matrix);
+            count++;
+        }
+
+        scene.add(trunks);
+        scene.add(leaves);
+    }
+
+    function buildFireflies() {
+        const count = 300;
+        const pos   = new Float32Array(count * 3);
+        const phase = new Float32Array(count);
+        for (let i = 0; i < count; i++) {
+            const x = (Math.random() - 0.5) * CONFIG.TERRAIN_SIZE;
+            const z = (Math.random() - 0.5) * CONFIG.TERRAIN_SIZE;
+            pos[i*3]   = x;
+            pos[i*3+1] = Math.max(getTerrainHeight(x, z), CONFIG.WATER_LEVEL) + 5 + Math.random() * 20;
+            pos[i*3+2] = z;
+            phase[i]   = Math.random() * Math.PI * 2;
+        }
+        const geo = new THREE.BufferGeometry();
+        geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+        geo.setAttribute('phase',    new THREE.BufferAttribute(phase, 1));
+        fireflies = new THREE.Points(geo, new THREE.PointsMaterial({ color: 0xffe166, size: 2.5, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending }));
+        scene.add(fireflies);
+    }
+
+    function spawnArtifacts() {
+        const geo     = new THREE.OctahedronGeometry(2.5);
+        const baseMat = new THREE.MeshStandardMaterial({ color: 0xffaa00, emissive: 0xffaa00, emissiveIntensity: 2, wireframe: true });
+        const shuffled = [...RIDDLES].sort(() => 0.5 - Math.random());
+
+        for (let i = 0; i < CONFIG.NUM_ARTIFACTS; i++) {
+            const mat  = baseMat.clone();
+            const mesh = new THREE.Mesh(geo, mat);
+            const tx   = (Math.random() - 0.5) * CONFIG.TERRAIN_SIZE * 0.8;
+            const tz   = (Math.random() - 0.5) * CONFIG.TERRAIN_SIZE * 0.8;
+            const spawnY = Math.max(getTerrainHeight(tx, tz), CONFIG.WATER_LEVEL + 5) + 7;
+
+            mesh.position.set(tx, spawnY, tz);
+            const light = new THREE.PointLight(0xffaa00, 120, 60);
+            mesh.add(light);
+            scene.add(mesh);
+
+            // Minimap dot
+            const marker = document.createElement('div');
+            marker.className = 'minimap-marker artifact-marker';
+            marker.id = `marker-${i}`;
+            const px = ((tx + CONFIG.TERRAIN_SIZE / 2) / CONFIG.TERRAIN_SIZE) * 100;
+            const pz = ((tz + CONFIG.TERRAIN_SIZE / 2) / CONFIG.TERRAIN_SIZE) * 100;
+            marker.style.left = `${Math.max(0, Math.min(100, px))}%`;
+            marker.style.top  = `${Math.max(0, Math.min(100, pz))}%`;
+            UI.minimap.appendChild(marker);
+
+            artifacts.push({ mesh, mat, light, riddle: shuffled[i], solved: false, baseY: spawnY, offset: Math.random() * Math.PI * 2 });
+        }
+    }
+
+    /* ─ State Machine ─ */
+    function setState(newState) {
+        currentState = newState;
+        UI.pauseOverlay.style.display    = 'none';
+        UI.riddleModal.style.display     = 'none';
+        UI.winScreen.style.display       = 'none';
+        UI.crosshair.style.display       = 'none';
+        UI.interactPrompt.style.display  = 'none';
+
+        if (newState === STATE.PLAYING) {
+            UI.crosshair.style.display = 'block';
+        } else if (newState === STATE.PAUSED) {
+            UI.pauseOverlay.style.display = 'flex';
+        } else if (newState === STATE.RIDDLE) {
+            UI.riddleModal.style.display = 'flex';
+        } else if (newState === STATE.WON) {
+            UI.winScreen.style.display = 'flex';
+            document.exitPointerLock();
+        }
+    }
+
+    /* ─ Events ─ */
+    function setupEvents() {
+        UI.startBtn.addEventListener('click', () => controls.lock());
+        UI.continueBtn.addEventListener('click', () => controls.lock());
+
+        controls.addEventListener('lock', () => {
+            if (currentState !== STATE.WON) setState(STATE.PLAYING);
+        });
+        controls.addEventListener('unlock', () => {
+            if (currentState === STATE.PLAYING) setState(STATE.PAUSED);
+        });
+        document.addEventListener('pointerlockerror', () => {
+            if (currentState !== STATE.WON && currentState !== STATE.RIDDLE) setState(STATE.PAUSED);
+        });
+
+        window.addEventListener('resize', () => {
+            const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-height'));
+            camera.aspect = window.innerWidth / (window.innerHeight - navH);
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight - navH);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (currentState !== STATE.PLAYING) return;
+            switch (e.code) {
+                case 'ArrowUp':    case 'KeyW': moveForward  = true; break;
+                case 'ArrowDown':  case 'KeyS': moveBackward = true; break;
+                case 'ArrowLeft':  case 'KeyA': moveLeft     = true; break;
+                case 'ArrowRight': case 'KeyD': moveRight    = true; break;
+                case 'Space': if (canJump) { velocity.y += CONFIG.JUMP_FORCE; canJump = false; } break;
+                case 'KeyE': openRiddle(); break;
+            }
+        });
+        document.addEventListener('keyup', (e) => {
+            switch (e.code) {
+                case 'ArrowUp':    case 'KeyW': moveForward  = false; break;
+                case 'ArrowDown':  case 'KeyS': moveBackward = false; break;
+                case 'ArrowLeft':  case 'KeyA': moveLeft     = false; break;
+                case 'ArrowRight': case 'KeyD': moveRight    = false; break;
+            }
+        });
+
+        UI.submitBtn.addEventListener('click', checkAnswer);
+        UI.riddleInput.addEventListener('keydown', (e) => { if (e.code === 'Enter') checkAnswer(); });
+    }
+
+    /* ─ Game Logic ─ */
+    function openRiddle() {
+        if (UI.interactPrompt.style.display !== 'block') return;
+        let closest = null, minD = 9999;
+        const p = controls.getObject().position;
+        artifacts.forEach(art => {
+            if (!art.solved) {
+                const d = p.distanceTo(art.mesh.position);
+                if (d < minD) { minD = d; closest = art; }
+            }
+        });
+        if (!closest || minD > CONFIG.INTERACT_RANGE) return;
+
+        activeArtifact = closest;
+        moveForward = moveBackward = moveLeft = moveRight = false;
+        document.exitPointerLock();
+        setState(STATE.RIDDLE);
+
+        UI.riddleText.innerText = closest.riddle.q;
+        UI.riddleNum.innerText  = `Artifact ${artifactsScored + 1} of ${CONFIG.NUM_ARTIFACTS}`;
+        UI.riddleInput.value    = '';
+        UI.feedback.innerText   = '';
+        UI.riddleInputGroup.style.display = 'block';
+        UI.continueBtn.style.display      = 'none';
+        setTimeout(() => UI.riddleInput.focus(), 50);
+    }
+
+    function checkAnswer() {
+        if (!activeArtifact || activeArtifact.solved) return;
+        const ans = UI.riddleInput.value.toLowerCase().trim();
+
+        if (ans.includes(activeArtifact.riddle.a)) {
+            activeArtifact.solved = true;
+            activeArtifact.mat.emissive.setHex(0x0fcb93);
+            activeArtifact.mat.color.setHex(0x0fcb93);
+            activeArtifact.light.color.setHex(0x0fcb93);
+            activeArtifact.light.intensity = 80;
+
+            document.getElementById(`marker-${artifacts.indexOf(activeArtifact)}`).classList.add('solved');
+            artifactsScored++;
+            UI.hudCount.innerText = artifactsScored;
+            UI.navScore.innerText = artifactsScored;
+
+            UI.riddleInputGroup.style.display = 'none';
+            UI.feedback.className = 'feedback-success';
+            UI.feedback.innerText = `✓ Correct! Relic ${artifactsScored}/${CONFIG.NUM_ARTIFACTS} activated.`;
+
+            if (artifactsScored >= CONFIG.NUM_ARTIFACTS) {
+                setTimeout(() => setState(STATE.WON), 1400);
+            } else {
+                UI.continueBtn.style.display = 'inline-block';
+            }
+        } else {
+            UI.feedback.className = 'feedback-error';
+            UI.feedback.innerText = `✗ Incorrect. Hint: ${activeArtifact.riddle.hint}`;
+        }
+    }
+
+    /* ─ Main Loop ─ */
+    function animate() {
+        requestAnimationFrame(animate);
+        const time  = performance.now();
+        const delta = Math.min((time - prevTime) / 1000, 0.1);
+        prevTime    = time;
+
+        // Animate fireflies
+        if (fireflies) {
+            const pos = fireflies.geometry.attributes.position.array;
+            const ph  = fireflies.geometry.attributes.phase.array;
+            for (let i = 0; i < ph.length; i++) {
+                pos[i*3]   += Math.sin(time * 0.001 + ph[i]) * 0.06;
+                pos[i*3+1] += Math.cos(time * 0.0008 + ph[i]) * 0.025;
+                pos[i*3+2] += Math.sin(time * 0.0012 + ph[i]) * 0.06;
+            }
+            fireflies.geometry.attributes.position.needsUpdate = true;
+        }
+
+        // Animate artifacts + proximity check
+        const pp = controls.getObject().position;
+        let canInteract = false;
+
+        artifacts.forEach(art => {
+            art.mesh.rotation.x += 0.5 * delta;
+            art.mesh.rotation.y += (art.solved ? 3.0 : 1.0) * delta;
+            if (!art.solved) {
+                art.mesh.position.y = art.baseY + Math.sin(time * 0.002 + art.offset) * 2;
+                if (currentState === STATE.PLAYING && pp.distanceTo(art.mesh.position) <= CONFIG.INTERACT_RANGE) canInteract = true;
+            } else {
+                art.mesh.position.y += (art.baseY - art.mesh.position.y) * 0.08;
+            }
+        });
+
+        if (currentState === STATE.PLAYING) {
+            UI.interactPrompt.style.display = canInteract ? 'block' : 'none';
+
+            // Physics
+            velocity.x -= velocity.x * 5.0 * delta;
+            velocity.z -= velocity.z * 5.0 * delta;
+            velocity.y -= CONFIG.GRAVITY * delta;
+
+            direction.z = Number(moveForward)  - Number(moveBackward);
+            direction.x = Number(moveRight)    - Number(moveLeft);
+            direction.normalize();
+            if (moveForward  || moveBackward) velocity.z -= direction.z * CONFIG.PLAYER_SPEED * delta;
+            if (moveLeft     || moveRight)    velocity.x -= direction.x * CONFIG.PLAYER_SPEED * delta;
+
+            controls.moveRight(-velocity.x * delta);
+            controls.moveForward(-velocity.z * delta);
+            controls.getObject().position.y += velocity.y * delta;
+
+            const groundY = Math.max(getTerrainHeight(pp.x, pp.z), CONFIG.WATER_LEVEL) + 15;
+            if (pp.y < groundY) { velocity.y = 0; pp.y = groundY; canJump = true; }
+            else { canJump = false; }
+
+            // Minimap player dot
+            UI.playerMarker.style.left = `${Math.max(0, Math.min(100, ((pp.x + CONFIG.TERRAIN_SIZE / 2) / CONFIG.TERRAIN_SIZE) * 100))}%`;
+            UI.playerMarker.style.top  = `${Math.max(0, Math.min(100, ((pp.z + CONFIG.TERRAIN_SIZE / 2) / CONFIG.TERRAIN_SIZE) * 100))}%`;
+        }
+
+        renderer.render(scene, camera);
+    }
+
+    init();
+</script>
+</body>
+</html>

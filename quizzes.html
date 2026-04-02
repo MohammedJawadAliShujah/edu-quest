@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quizzes – EcoQuest</title>
+  <meta name="description" content="Test your environmental knowledge with EcoQuest's interactive quizzes on climate, energy, biodiversity, waste, and oceans.">
+  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo"><div class="nav-logo-icon">🌿</div>Eco<span>Quest</span></a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">🏠 Home</a>
+      <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+      <a href="quizzes.html" class="nav-link active">📝 Quizzes</a>
+      <a href="missions.html" class="nav-link">🌍 Missions</a>
+      <a href="leaderboard.html" class="nav-link">🏆 Leaderboard</a>
+      <a href="badges.html" class="nav-link">🏅 Badges</a>
+      <a href="recommendations.html" class="nav-link">🤖 AI Tips</a>
+      <a href="game.html" class="nav-link" style="color:var(--clr-gold);border:1px solid rgba(245,158,11,0.25);border-radius:var(--radius-full);padding:6px 14px">🎮 Game</a>
+    </div>
+    <div class="nav-right">
+      <div class="nav-xp-area">
+        <div class="nav-xp-label"><span id="nav-xp-val">720 XP</span><span id="nav-xp-next">to Tree</span></div>
+        <div class="nav-xp-bar"><div class="nav-xp-fill" id="nav-xp-fill" style="width:40%"></div></div>
+      </div>
+      <div class="nav-level-badge"><span id="nav-level-name">🌿 Sprout</span></div>
+      <div class="nav-avatar">EW</div>
+      <button onclick="Auth.logout()" title="Logout" style="background:transparent;border:1px solid var(--border-subtle);border-radius:var(--radius-full);padding:6px 12px;color:var(--text-muted);font-size:0.75rem;cursor:pointer;transition:all 0.2s;font-family:var(--font-sans)" onmouseover="this.style.color='var(--clr-danger)';this.style.borderColor='var(--clr-danger)'" onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border-subtle)'">⏻ Logout</button>
+    </div>
+    <button class="nav-hamburger" id="nav-hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+<div class="mobile-nav-drawer" id="mobile-nav-drawer">
+  <a href="index.html" class="nav-logo"><div class="nav-logo-icon">🌿</div>Eco<span style="color:var(--clr-primary)">Quest</span></a>
+  <div class="mobile-nav-links">
+    <a href="index.html" class="mobile-nav-link">🏠 Home</a>
+    <a href="dashboard.html" class="mobile-nav-link">📊 Dashboard</a>
+    <a href="quizzes.html" class="mobile-nav-link active">📝 Quizzes</a>
+    <a href="missions.html" class="mobile-nav-link">🌍 Missions</a>
+    <a href="leaderboard.html" class="mobile-nav-link">🏆 Leaderboard</a>
+    <a href="badges.html" class="mobile-nav-link">🏅 Badges</a>
+    <a href="recommendations.html" class="mobile-nav-link">🤖 AI Tips</a>
+    <a href="game.html" class="mobile-nav-link" style="color:var(--clr-gold)">🎮 Game</a>
+  </div>
+</div>
+
+<div class="page-wrapper">
+  <div class="container">
+
+    <div class="page-header flex justify-between items-center flex-wrap gap-md">
+      <div>
+        <div class="page-title">📝 Eco Quizzes</div>
+        <div class="page-subtitle">Test your knowledge, earn XP, and climb the leaderboard</div>
+      </div>
+      <div class="flex gap-md items-center">
+        <div class="badge badge-gold">⚡ +50 XP per quiz</div>
+        <div class="badge badge-green">🔴 Timer Mode</div>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="grid-4 gap-md" style="margin-bottom:32px">
+      <div class="stat-card">
+        <div class="stat-icon">📝</div>
+        <div class="stat-value" id="q-completed">3</div>
+        <div class="stat-label">Quizzes Taken</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:rgba(245,158,11,0.12)">🎯</div>
+        <div class="stat-value">78<span style="font-size:1rem">%</span></div>
+        <div class="stat-label">Avg. Accuracy</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⚡</div>
+        <div class="stat-value">150</div>
+        <div class="stat-label">Quiz XP Earned</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background:var(--clr-accent-dim)">🔥</div>
+        <div class="stat-value">5</div>
+        <div class="stat-label">Best Streak</div>
+      </div>
+    </div>
+
+    <!-- Category Cards -->
+    <div class="grid-3 gap-lg" id="quiz-categories">
+
+      <div class="quiz-category-card" data-category="climate" id="cat-climate">
+        <span class="quiz-cat-icon">🌡️</span>
+        <div class="quiz-cat-title">Climate Change</div>
+        <div class="quiz-cat-count">10 questions · ~3 min</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+          <div class="quiz-cat-difficulty">
+            <div class="difficulty-dot filled"></div>
+            <div class="difficulty-dot filled"></div>
+            <div class="difficulty-dot"></div>
+          </div>
+          <div class="badge badge-green">Medium</div>
+        </div>
+        <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" style="width:70%"></div></div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">Best: 7/10</div>
+      </div>
+
+      <div class="quiz-category-card" data-category="energy" id="cat-energy">
+        <span class="quiz-cat-icon" style="animation-delay:0.3s">⚡</span>
+        <div class="quiz-cat-title">Renewable Energy</div>
+        <div class="quiz-cat-count">10 questions · ~3 min</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+          <div class="quiz-cat-difficulty">
+            <div class="difficulty-dot filled"></div>
+            <div class="difficulty-dot"></div>
+            <div class="difficulty-dot"></div>
+          </div>
+          <div class="badge badge-green">Easy</div>
+        </div>
+        <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" style="width:90%"></div></div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">Best: 9/10</div>
+      </div>
+
+      <div class="quiz-category-card" data-category="biodiversity" id="cat-biodiversity">
+        <span class="quiz-cat-icon" style="animation-delay:0.6s">🦋</span>
+        <div class="quiz-cat-title">Biodiversity</div>
+        <div class="quiz-cat-count">10 questions · ~4 min</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+          <div class="quiz-cat-difficulty">
+            <div class="difficulty-dot filled"></div>
+            <div class="difficulty-dot filled"></div>
+            <div class="difficulty-dot filled"></div>
+          </div>
+          <div class="badge badge-red">Hard</div>
+        </div>
+        <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" style="width:0%"></div></div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">Not attempted</div>
+      </div>
+
+      <div class="quiz-category-card" data-category="waste" id="cat-waste">
+        <span class="quiz-cat-icon" style="animation-delay:0.9s">♻️</span>
+        <div class="quiz-cat-title">Waste & Recycling</div>
+        <div class="quiz-cat-count">10 questions · ~3 min</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+          <div class="quiz-cat-difficulty">
+            <div class="difficulty-dot filled"></div>
+            <div class="difficulty-dot filled"></div>
+            <div class="difficulty-dot"></div>
+          </div>
+          <div class="badge badge-green">Medium</div>
+        </div>
+        <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" style="width:0%"></div></div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">Not attempted</div>
+      </div>
+
+      <div class="quiz-category-card" data-category="ocean" id="cat-ocean">
+        <span class="quiz-cat-icon" style="animation-delay:1.2s">🌊</span>
+        <div class="quiz-cat-title">Ocean & Marine Life</div>
+        <div class="quiz-cat-count">10 questions · ~4 min</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:8px">
+          <div class="quiz-cat-difficulty">
+            <div class="difficulty-dot filled"></div>
+            <div class="difficulty-dot filled"></div>
+            <div class="difficulty-dot filled"></div>
+          </div>
+          <div class="badge badge-red">Hard</div>
+        </div>
+        <div class="progress-bar" style="margin-top:12px"><div class="progress-fill" style="width:0%"></div></div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:4px">Not attempted</div>
+      </div>
+
+      <div class="quiz-category-card" data-category="air" id="cat-air" style="border:1px dashed var(--border-default);opacity:0.6;pointer-events:none">
+        <span class="quiz-cat-icon" style="filter:grayscale(1)">💨</span>
+        <div class="quiz-cat-title">Air Quality</div>
+        <div class="quiz-cat-count">Coming Soon</div>
+        <div style="margin-top:12px"><div class="badge badge-purple">Unlocks at Level 3</div></div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- QUIZ MODAL -->
+<div class="modal-overlay hidden" id="quiz-modal">
+  <div class="modal-box" style="max-width:640px">
+    <div class="modal-header">
+      <div>
+        <div id="quiz-cat-title" style="font-weight:700;font-size:1.1rem">Climate Change Quiz</div>
+        <div id="quiz-cat-subtitle" style="font-size:0.8125rem;color:var(--text-muted)">10 questions · 30 seconds each</div>
+      </div>
+      <div class="flex items-center gap-md">
+        <div class="quiz-timer" id="quiz-timer">⏱ 30</div>
+        <button class="modal-close" id="quiz-close">✕</button>
+      </div>
+    </div>
+
+    <div id="quiz-active-state">
+      <div class="modal-body">
+        <!-- Progress -->
+        <div class="quiz-progress-bar">
+          <div class="flex quiz-question-num">
+            <span>Question <span id="q-num">1</span> of <span id="q-total">10</span></span>
+            <span>Score: <span id="q-score" style="color:var(--clr-primary);font-weight:700">0</span></span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="quiz-progress-fill" style="width:10%"></div>
+          </div>
+        </div>
+
+        <!-- Question -->
+        <div class="quiz-question" id="quiz-question">What is the primary driver of climate change?</div>
+
+        <!-- Options -->
+        <div class="quiz-options" id="quiz-options"></div>
+
+        <!-- Explanation -->
+        <div class="quiz-explanation" id="quiz-explanation"></div>
+      </div>
+
+      <div class="modal-footer" style="justify-content:space-between">
+        <div class="badge badge-gold" id="streak-display">🔥 Streak: 0</div>
+        <button class="btn btn-primary" id="next-question-btn" style="display:none">Next Question →</button>
+      </div>
+    </div>
+
+    <!-- Result State -->
+    <div id="quiz-result-state" style="display:none">
+      <div class="quiz-result">
+        <div style="font-size:3.5rem" id="result-emoji">🎉</div>
+        <div style="font-size:0.875rem;color:var(--text-muted);margin-top:8px">Your Score</div>
+        <div class="quiz-result-score" id="result-score">8/10</div>
+        <div class="quiz-result-stars" id="result-stars">⭐⭐⭐⭐</div>
+        <div style="font-size:0.9375rem;color:var(--text-secondary);margin-bottom:20px" id="result-msg">Excellent work!</div>
+        <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:24px">
+          <div style="padding:16px 24px;background:var(--bg-elevated);border-radius:var(--radius-md);text-align:center">
+            <div style="font-size:1.5rem;font-weight:800;color:var(--clr-primary)" id="result-xp">+50 XP</div>
+            <div style="font-size:0.75rem;color:var(--text-muted)">Earned</div>
+          </div>
+          <div style="padding:16px 24px;background:var(--bg-elevated);border-radius:var(--radius-md);text-align:center">
+            <div style="font-size:1.5rem;font-weight:800;color:var(--clr-gold)" id="result-accuracy">80%</div>
+            <div style="font-size:0.75rem;color:var(--text-muted)">Accuracy</div>
+          </div>
+          <div style="padding:16px 24px;background:var(--bg-elevated);border-radius:var(--radius-md);text-align:center">
+            <div style="font-size:1.5rem;font-weight:800;color:var(--clr-accent)" id="result-time">45s</div>
+            <div style="font-size:0.75rem;color:var(--text-muted)">Avg Time</div>
+          </div>
+        </div>
+        <div class="flex gap-md justify-center">
+          <button class="btn btn-primary" id="retry-quiz-btn">🔄 Retry Quiz</button>
+          <button class="btn btn-secondary" id="close-result-btn">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
+<script>Auth.guard();</script>
+<script>
+// ── QUIZ DATA ──
+const QUIZ_DATA = {
+  climate: {
+    title: 'Climate Change', icon: '🌡️',
+    questions: [
+      { q: 'What is the primary greenhouse gas responsible for global warming?', opts: ['Oxygen', 'Carbon Dioxide', 'Nitrogen', 'Argon'], correct: 1, exp: 'CO₂ is the main greenhouse gas from human activities like burning fossil fuels.' },
+      { q: 'What percentage of the last 200 years warming is attributed to human activity?', opts: ['50%', '70%', '95%+', '30%'], correct: 2, exp: 'The IPCC states with 95%+ certainty that humans are the dominant cause of warming since 1950.' },
+      { q: 'What is the Paris Agreement\'s target temperature rise above pre-industrial levels?', opts: ['1°C', '1.5°C', '2.5°C', '3°C'], correct: 1, exp: 'The Paris Agreement aims to limit warming to 1.5°C, with a 2°C hard limit.' },
+      { q: 'Which sector contributes the most to global greenhouse gas emissions?', opts: ['Transport', 'Agriculture', 'Energy production', 'Industry'], correct: 2, exp: 'Energy production (electricity, heat, fuel) accounts for ~73% of global emissions.' },
+      { q: 'What term describes the increase in ocean acidity due to CO₂ absorption?', opts: ['Ocean warming', 'Ocean acidification', 'Eutrophication', 'Salinization'], correct: 1, exp: 'Oceans absorb ~25% of CO₂ emissions, forming carbonic acid and lowering pH.' },
+      { q: 'Which gas is 80x more potent than CO₂ over 20 years?', opts: ['Ozone', 'Nitrous oxide', 'Methane', 'CFC'], correct: 2, exp: 'Methane (CH₄) has 80x the warming potential of CO₂ over 20 years.' },
+      { q: 'The "carbon footprint" concept was popularized by which company?', opts: ['ExxonMobil', 'BP', 'Shell', 'Chevron'], correct: 1, exp: 'BP popularized "carbon footprint" in a 2004 marketing campaign to shift responsibility.' },
+      { q: 'What is "net zero" emissions?', opts: ['Zero emissions', 'Removing all CO₂', 'Balancing emissions with removals', 'Stopping all fossil fuels'], correct: 2, exp: 'Net zero means balancing the amount of greenhouse gas emitted with the amount removed.' },
+      { q: 'Which natural system absorbs the most carbon globally?', opts: ['Rainforests', 'Oceans', 'Peatlands', 'Tundra'], correct: 1, exp: 'Oceans are the world\'s largest carbon sink, absorbing ~26% of annual CO₂ emissions.' },
+      { q: 'What is "climate tipping point"?', opts: ['Point of no return', 'Best climate temperature', 'Amount of carbon saved', 'Climate summit vote'], correct: 0, exp: 'Tipping points are thresholds where small changes trigger larger, irreversible changes in the climate system.' },
+    ]
+  },
+  energy: {
+    title: 'Renewable Energy', icon: '⚡',
+    questions: [
+      { q: 'Solar panels convert sunlight into electricity via which effect?', opts: ['Thermal effect', 'Photovoltaic effect', 'Piezoelectric effect', 'Magnetic effect'], correct: 1, exp: 'The photovoltaic effect causes solar cells to generate electric current when exposed to light.' },
+      { q: 'What is the most installed renewable energy source worldwide?', opts: ['Wind', 'Solar', 'Hydropower', 'Geothermal'], correct: 2, exp: 'Hydropower currently accounts for over 16% of global electricity generation, the largest share of renewables.' },
+      { q: 'An offshore wind turbine can power how many homes?', opts: ['10', '100', '1000', '5000+'], correct: 3, exp: 'Modern large offshore wind turbines (12–15 MW) can power 5,000–10,000 average homes.' },
+      { q: 'What does "LCOE" stand for in energy economics?', opts: ['Low Cost Of Energy', 'Levelized Cost Of Energy', 'Local Carbon Output Estimate', 'Long-term Carbon Offset Equation'], correct: 1, exp: 'LCOE (Levelized Cost Of Energy) measures the average cost per unit of electricity over a plant\'s lifetime.' },
+      { q: 'Which country generates the most wind energy?', opts: ['USA', 'Germany', 'China', 'Denmark'], correct: 2, exp: 'China leads global wind energy capacity with over 400 GW installed.' },
+      { q: 'What material is most commonly used in solar panels?', opts: ['Copper', 'Silicon', 'Aluminum', 'Germanium'], correct: 1, exp: 'Silicon is the most widely used semiconductor material in solar cells.' },
+      { q: 'Geothermal energy gets its heat from:', opts: ['Sunlight stored in rock', 'Earth\'s core and radioactive decay', 'Ocean currents', 'Wind stored underground'], correct: 1, exp: 'Geothermal energy comes from heat within the Earth, from the core and radioactive element decay.' },
+      { q: 'What is "green hydrogen"?', opts: ['Hydrogen from natural gas', 'Hydrogen from coal', 'Hydrogen from renewable-powered electrolysis', 'Hydrogen from nuclear energy'], correct: 2, exp: 'Green hydrogen is produced by splitting water using renewable electricity — zero carbon emissions.' },
+      { q: 'The global renewable energy investment in 2023 was approximately:', opts: ['$100 billion', '$300 billion', '$1 trillion', '$500 billion'], correct: 2, exp: 'Global clean energy investment surpassed $1.7 trillion in 2023 for the first time.' },
+      { q: 'What is "energy storage" critical for?', opts: ['Reducing energy costs', 'Balancing intermittent renewable supply/demand', 'Increasing grid voltage', 'Storing nuclear waste'], correct: 1, exp: 'Energy storage (like batteries) is essential to balance renewable energy\'s variable output with demand.' },
+    ]
+  },
+  biodiversity: {
+    title: 'Biodiversity', icon: '🦋',
+    questions: [
+      { q: 'How many species are estimated to exist on Earth?', opts: ['1 million', '5–10 million', '8.7 million+', '20 million+'], correct: 2, exp: 'Scientists estimate ~8.7 million species exist, though only ~1.5 million have been formally described.' },
+      { q: 'What is the current rate of species extinction compared to the natural background rate?', opts: ['Same rate', '10x faster', '100–1000x faster', '5x faster'], correct: 2, exp: 'Species are going extinct 100–1000x faster than the natural background rate, largely due to human activity.' },
+      { q: 'What percentage of species are found in tropical rainforests?', opts: ['25%', '40%', '75%+', '55%'], correct: 2, exp: 'Tropical rainforests, covering only 6% of Earth\'s land, contain over 50% of all plant and animal species.' },
+      { q: 'Which is the largest threat to biodiversity globally?', opts: ['Climate change', 'Pollution', 'Habitat loss', 'Invasive species'], correct: 2, exp: 'Habitat loss and land use change is the #1 driver of biodiversity loss globally.' },
+      { q: 'What is a "keystone species"?', opts: ['An endangered species', 'The most abundant species', 'A species with disproportionate ecosystem impact', 'A species found on every continent'], correct: 2, exp: 'Keystone species have an outsized effect on the ecosystem relative to their biomass — like wolves or sea otters.' },
+      { q: 'The Convention on Biological Diversity targets how much land protected by 2030?', opts: ['15%', '20%', '30%', '50%'], correct: 2, exp: 'The "30x30" target aims to protect 30% of land and oceans by 2030.' },
+      { q: 'Pollinators are responsible for roughly what share of global food production?', opts: ['10%', '25%', '50%', '75%'], correct: 1, exp: 'About 75% of food crops depend on pollinators in some way, but insects do ~35% of the work.' },
+      { q: 'What is "rewilding"?', opts: ['Breeding animals in labs', 'Reintroducing species to restore ecosystems', 'Creating new national parks', 'Removing invasive species'], correct: 1, exp: 'Rewilding restores ecosystems by reintroducing lost species and allowing natural processes to resume.' },
+      { q: 'Coral reefs support what percentage of marine species?', opts: ['10%', '25%', '50%', '75%'], correct: 1, exp: 'Coral reefs cover less than 1% of the ocean but support ~25% of all marine species.' },
+      { q: 'Which IUCN Red List category is the most critical?', opts: ['Vulnerable', 'Endangered', 'Critically Endangered', 'Near Threatened'], correct: 2, exp: '"Critically Endangered" is the highest IUCN risk category before "Extinct in the Wild."' },
+    ]
+  },
+  waste: {
+    title: 'Waste & Recycling', icon: '♻️',
+    questions: [
+      { q: 'How long does a plastic bottle take to decompose in the environment?', opts: ['10 years', '50 years', '450+ years', '1000+ years'], correct: 2, exp: 'A standard PET plastic bottle takes 450+ years to decompose in the environment.' },
+      { q: 'What percentage of all plastic ever produced has been recycled?', opts: ['50%', '30%', '9%', '20%'], correct: 2, exp: 'Only about 9% of all plastic ever produced has been recycled. 12% was incinerated, 79% is in landfills.' },
+      { q: 'What is "circular economy"?', opts: ['Economy with circular money', 'System that eliminates waste by reusing resources', 'Recycling by sending waste in circles', 'Economic model for circular cities'], correct: 1, exp: 'A circular economy keeps materials in use longer — through reuse, repair, refurbish, recycle.' },
+      { q: 'Electronic waste (e-waste) contains which toxic heavy metal?', opts: ['Gold', 'Lead', 'Copper', 'Iron'], correct: 1, exp: 'E-waste contains lead, mercury, cadmium and other toxic heavy metals that can leach into soil and water.' },
+      { q: 'What is upcycling?', opts: ['Recycling better quality materials', 'Converting waste into higher value products', 'Sending waste up a recycling chain', 'Upgrading recycling facilities'], correct: 1, exp: 'Upcycling transforms waste into new products of higher quality or value than the original.' },
+      { q: 'How much food is wasted globally each year?', opts: ['500 million tons', '1 billion tons', '1.3 billion tons', '500,000 tons'], correct: 2, exp: 'About 1.3 billion tons of food is wasted annually — roughly 1/3 of all food produced globally.' },
+      { q: 'What does "zero waste" mean?', opts: ['No waste at all', 'Sending nothing to landfill or incineration', 'Recycling 100% of materials', 'Zero plastic use'], correct: 1, exp: 'Zero waste aims to eliminate waste sent to landfill/incineration by redesigning the entire life cycle.' },
+      { q: 'Composting food scraps reduces which greenhouse gas emissions?', opts: ['CO₂', 'Methane', 'Nitrous oxide', 'Ozone'], correct: 1, exp: 'Composting diverts organic waste from landfills, which produce methane — a potent greenhouse gas.' },
+      { q: 'What color bin is typically used for recycling in most countries?', opts: ['Black', 'Brown', 'Blue', 'Yellow'], correct: 2, exp: 'Blue bins are the most common internationally for recyclables, though colors vary by country.' },
+      { q: 'What material has the highest recycling rate globally?', opts: ['Plastic', 'Glass', 'Paper', 'Aluminum'], correct: 3, exp: 'Aluminum has among the highest recycling rates (~75% in the US) and can be recycled indefinitely.' },
+    ]
+  },
+  ocean: {
+    title: 'Ocean & Marine Life', icon: '🌊',
+    questions: [
+      { q: 'What percentage of Earth\'s surface is covered by oceans?', opts: ['51%', '61%', '71%', '81%'], correct: 2, exp: 'Oceans cover about 71% of Earth\'s surface and contain 97% of the planet\'s water.' },
+      { q: 'How much plastic enters the ocean each year?', opts: ['1 million tons', '8–10 million tons', '50 million tons', '100,000 tons'], correct: 1, exp: 'An estimated 8–10 million metric tons of plastic enter the oceans each year.' },
+      { q: 'At what depth does sunlight not penetrate in the ocean?', opts: ['100m (twilight zone)', '200m', '1000m', '500m'], correct: 1, exp: 'The photic zone extends to ~200m. Below that, no significant sunlight penetrates.' },
+      { q: 'What is the "Great Pacific Garbage Patch"?', opts: ['A volcanic island', 'A massive accumulation of marine plastic debris', 'A coral reef area', 'An oil spill site'], correct: 1, exp: 'The GPGP is a gyre in the Pacific Ocean where ocean currents concentrate floating plastic debris.' },
+      { q: 'Ocean acidity has increased by what percentage since industrialization?', opts: ['10%', '26%', '50%', '5%'], correct: 1, exp: 'Ocean acidity has increased ~26% (a 0.1 pH unit drop) since the Industrial Revolution.' },
+      { q: 'What is bioluminescence in marine creatures?', opts: ['Reflection of sunlight', 'Production of light through chemical reactions', 'Use of electric signals', 'Echo-location technique'], correct: 1, exp: 'Bioluminescence is the production and emission of light by living organisms via chemical reactions.' },
+      { q: 'Which marine ecosystem is often called the "rainforest of the sea"?', opts: ['Kelp forests', 'Coral reefs', 'Mangroves', 'Seagrass beds'], correct: 1, exp: 'Coral reefs are called the "rainforests of the sea" for their incredible biodiversity.' },
+      { q: 'What is "dead zone" in the ocean?', opts: ['Area with no fish', 'Hypoxic area with too little oxygen for most marine life', 'Deepest ocean trench', 'Area with no sunlight'], correct: 1, exp: 'Ocean dead zones are hypoxic areas with too little oxygen to support most marine life, often caused by agriculture runoff.' },
+      { q: 'Approximately how deep is the Mariana Trench?', opts: ['5 km', '7 km', '11 km', '15 km'], correct: 2, exp: 'The Mariana Trench is about 11 km (36,000 ft) deep — the deepest known point in the ocean.' },
+      { q: 'Marine Protected Areas (MPAs) currently cover about what % of the ocean?', opts: ['3%', '8%', '30%', '50%'], correct: 1, exp: 'About 8% of the ocean is currently protected as Marine Protected Areas, far from the 30x30 target.' },
+    ]
+  },
+};
+
+// ── QUIZ ENGINE ──
+let currentQuiz = null;
+let currentQuestion = 0;
+let score = 0;
+let correctStreak = 0;
+let timerInterval = null;
+let timeLeft = 30;
+let totalTimeUsed = 0;
+let answered = false;
+
+function openQuiz(category) {
+  const data = QUIZ_DATA[category];
+  if (!data) return;
+
+  currentQuiz = { ...data, category, questions: [...data.questions].sort(() => Math.random() - 0.5).slice(0, 10) };
+  currentQuestion = 0;
+  score = 0;
+  correctStreak = 0;
+  totalTimeUsed = 0;
+
+  document.getElementById('quiz-cat-title').textContent = data.icon + ' ' + data.title + ' Quiz';
+  document.getElementById('quiz-modal').classList.remove('hidden');
+  document.getElementById('quiz-active-state').style.display = 'block';
+  document.getElementById('quiz-result-state').style.display = 'none';
+
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = currentQuiz.questions[currentQuestion];
+  const total = currentQuiz.questions.length;
+  answered = false;
+
+  document.getElementById('q-num').textContent = currentQuestion + 1;
+  document.getElementById('q-total').textContent = total;
+  document.getElementById('q-score').textContent = score;
+  document.getElementById('quiz-progress-fill').style.width = ((currentQuestion / total) * 100) + '%';
+  document.getElementById('quiz-question').textContent = q.q;
+  document.getElementById('streak-display').textContent = '🔥 Streak: ' + correctStreak;
+  document.getElementById('quiz-explanation').textContent = '';
+  document.getElementById('quiz-explanation').classList.remove('show');
+  document.getElementById('next-question-btn').style.display = 'none';
+
+  const optContainer = document.getElementById('quiz-options');
+  const letters = ['A', 'B', 'C', 'D'];
+  optContainer.innerHTML = q.opts.map((opt, i) => `
+    <button class="quiz-option" data-index="${i}" id="opt-${i}">
+      <div class="quiz-option-letter">${letters[i]}</div>
+      ${opt}
+    </button>
+  `).join('');
+
+  optContainer.querySelectorAll('.quiz-option').forEach(btn => {
+    btn.addEventListener('click', () => selectAnswer(parseInt(btn.dataset.index)));
+  });
+
+  startTimer();
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timeLeft = 30;
+  updateTimerDisplay();
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    updateTimerDisplay();
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      if (!answered) selectAnswer(-1); // timed out
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const el = document.getElementById('quiz-timer');
+  el.textContent = '⏱ ' + timeLeft;
+  el.classList.toggle('danger', timeLeft <= 8);
+}
+
+function selectAnswer(idx) {
+  if (answered) return;
+  answered = true;
+  clearInterval(timerInterval);
+  totalTimeUsed += (30 - timeLeft);
+
+  const q = currentQuiz.questions[currentQuestion];
+  const opts = document.querySelectorAll('.quiz-option');
+
+  opts.forEach((btn, i) => {
+    btn.classList.add('disabled');
+    if (i === q.correct) btn.classList.add('correct');
+    else if (i === idx) btn.classList.add('wrong');
+  });
+
+  if (idx === q.correct) {
+    score++;
+    correctStreak++;
+    EQ.showToast('success', '✓ Correct!', correctStreak > 1 ? `${correctStreak}x Streak! 🔥` : '');
+  } else {
+    correctStreak = 0;
+    if (idx !== -1) EQ.showToast('error', '✗ Wrong!', 'See explanation below.');
+    else EQ.showToast('warning', '⏱ Time\'s up!', 'The correct answer is highlighted.');
+  }
+
+  document.getElementById('quiz-explanation').textContent = '💡 ' + q.exp;
+  document.getElementById('quiz-explanation').classList.add('show');
+  document.getElementById('next-question-btn').style.display = 'block';
+  document.getElementById('q-score').textContent = score;
+}
+
+document.getElementById('next-question-btn').addEventListener('click', () => {
+  currentQuestion++;
+  if (currentQuestion >= currentQuiz.questions.length) {
+    showResult();
+  } else {
+    renderQuestion();
+  }
+});
+
+function showResult() {
+  clearInterval(timerInterval);
+  document.getElementById('quiz-active-state').style.display = 'none';
+  document.getElementById('quiz-result-state').style.display = 'block';
+
+  const total = currentQuiz.questions.length;
+  const accuracy = Math.round((score / total) * 100);
+  const avgTime = Math.round(totalTimeUsed / total);
+
+  const xpEarned = 30 + score * 8 + (accuracy === 100 ? 30 : 0);
+
+  document.getElementById('result-score').textContent = score + '/' + total;
+  document.getElementById('result-accuracy').textContent = accuracy + '%';
+  document.getElementById('result-time').textContent = avgTime + 's';
+  document.getElementById('result-xp').textContent = '+' + xpEarned + ' XP';
+
+  const stars = score >= 9 ? '⭐⭐⭐⭐⭐' : score >= 7 ? '⭐⭐⭐⭐' : score >= 5 ? '⭐⭐⭐' : score >= 3 ? '⭐⭐' : '⭐';
+  const emoji = score >= 8 ? '🎉' : score >= 5 ? '👍' : '💪';
+  const msg = score >= 9 ? 'Outstanding! You\'re an eco genius!' : score >= 7 ? 'Great job! Keep learning!' : score >= 5 ? 'Good effort! Review and retry!' : 'Keep practicing – every attempt helps!';
+
+  document.getElementById('result-stars').textContent = stars;
+  document.getElementById('result-emoji').textContent = emoji;
+  document.getElementById('result-msg').textContent = msg;
+
+  EQ.awardXP(xpEarned, `${currentQuiz.title} Quiz completed!`);
+
+  const s = EQ.getState();
+  EQ.setState({
+    quizzesCompleted: s.quizzesCompleted + 1,
+    hasPerfectScore: s.hasPerfectScore || score === total,
+  });
+
+  if (accuracy === 100) EQ.triggerConfetti();
+}
+
+document.getElementById('retry-quiz-btn').addEventListener('click', () => {
+  openQuiz(currentQuiz.category);
+});
+
+document.getElementById('close-result-btn').addEventListener('click', closeModal);
+document.getElementById('quiz-close').addEventListener('click', closeModal);
+document.getElementById('quiz-modal').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('quiz-modal')) closeModal();
+});
+
+function closeModal() {
+  clearInterval(timerInterval);
+  document.getElementById('quiz-modal').classList.add('hidden');
+}
+
+// Attach click handlers to category cards
+document.querySelectorAll('.quiz-category-card').forEach(card => {
+  card.addEventListener('click', () => {
+    openQuiz(card.dataset.category);
+  });
+});
+
+// Update stat
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('q-completed').textContent = EQ.getState().quizzesCompleted;
+});
+</script>
+</body>
+</html>

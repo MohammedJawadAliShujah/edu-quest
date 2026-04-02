@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login – EcoQuest</title>
+  <meta name="description" content="Sign in to EcoQuest and continue your environmental education journey.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+  <style>
+    :root {
+      --clr-primary: #00C896;
+      --clr-primary-glow: rgba(0,200,150,0.35);
+      --clr-primary-dim: rgba(0,200,150,0.1);
+      --clr-accent: #7C3AED;
+      --clr-accent-dim: rgba(124,58,237,0.12);
+      --bg-base: #0D1117;
+      --bg-card: #161B22;
+      --bg-elevated: #21262D;
+      --text-primary: #E6EDF3;
+      --text-secondary: #8B949E;
+      --text-muted: #484F58;
+      --border-subtle: rgba(255,255,255,0.06);
+      --border-default: rgba(255,255,255,0.12);
+      --clr-danger: #EF4444;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --radius-full: 999px;
+      --font-sans: 'Inter', system-ui, sans-serif;
+      --font-display: 'Outfit', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Left Panel (Visual) ── */
+    .panel-left {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      overflow: hidden;
+      background: radial-gradient(ellipse 120% 100% at 30% 60%, rgba(0,200,150,0.12) 0%, transparent 60%),
+                  radial-gradient(ellipse 80% 80% at 80% 20%, rgba(124,58,237,0.1) 0%, transparent 50%),
+                  var(--bg-base);
+    }
+
+    #left-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .panel-left-content {
+      position: relative;
+      z-index: 2;
+      max-width: 440px;
+      text-align: center;
+    }
+
+    .brand-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 40px;
+    }
+    .brand-icon {
+      width: 52px; height: 52px;
+      background: linear-gradient(135deg, var(--clr-primary), #00A87A);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      box-shadow: 0 8px 24px var(--clr-primary-glow);
+    }
+    .brand-name {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+    .brand-name span { color: var(--clr-primary); }
+
+    .tagline {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.5vw, 2.75rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #fff 30%, var(--clr-primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tagline-sub {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      max-width: 36ch;
+      margin: 0 auto 40px;
+      line-height: 1.6;
+    }
+
+    /* Feature pills */
+    .feature-pills {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      text-align: left;
+    }
+    .pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      transition: all 0.25s;
+    }
+    .pill:hover { border-color: var(--clr-primary); color: var(--text-primary); background: var(--clr-primary-dim); }
+    .pill-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .pill-icon.green  { background: var(--clr-primary-dim); }
+    .pill-icon.purple { background: var(--clr-accent-dim); }
+    .pill-icon.gold   { background: rgba(245,158,11,0.1); }
+
+    /* Stats bar */
+    .stats-bar {
+      display: flex;
+      gap: 24px;
+      margin-top: 40px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border-subtle);
+      justify-content: center;
+    }
+    .stat-item { text-align: center; }
+    .stat-val {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--clr-primary);
+    }
+    .stat-lbl { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+    /* ── Right Panel (Form) ── */
+    .panel-right {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      background: var(--bg-card);
+      border-left: 1px solid var(--border-subtle);
+      overflow-y: auto;
+    }
+
+    .auth-box {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .auth-header { margin-bottom: 32px; }
+    .auth-title {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .auth-subtitle { font-size: 0.9rem; color: var(--text-secondary); }
+
+    /* Tab switcher */
+    .auth-tabs {
+      display: flex;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-full);
+      padding: 4px;
+      margin-bottom: 28px;
+    }
+    .auth-tab {
+      flex: 1;
+      padding: 9px;
+      text-align: center;
+      border-radius: var(--radius-full);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.25s;
+      border: none;
+      background: none;
+      font-family: var(--font-sans);
+    }
+    .auth-tab.active {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+    .auth-tab:hover:not(.active) { color: var(--text-primary); }
+
+    /* Form */
+    .auth-form { display: flex; flex-direction: column; gap: 16px; }
+    .auth-form.hidden { display: none; }
+
+    .field-group { display: flex; flex-direction: column; gap: 6px; }
+    .field-label {
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: 0.01em;
+    }
+    .field-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .field-icon {
+      position: absolute;
+      left: 14px;
+      font-size: 1rem;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.5;
+    }
+    .field-input {
+      width: 100%;
+      padding: 12px 14px 12px 42px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-size: 0.9375rem;
+      font-family: var(--font-sans);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .field-input::placeholder { color: var(--text-muted); }
+    .field-input:focus {
+      border-color: var(--clr-primary);
+      box-shadow: 0 0 0 3px rgba(0,200,150,0.12);
+    }
+    .field-input.error {
+      border-color: var(--clr-danger);
+      box-shadow: 0 0 0 3px rgba(239,68,68,0.1);
+    }
+    .field-input.success {
+      border-color: var(--clr-primary);
+    }
+
+    .eye-toggle {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 4px;
+      font-size: 1rem;
+      transition: color 0.2s;
+    }
+    .eye-toggle:hover { color: var(--text-primary); }
+
+    /* Password strength */
+    .pw-strength {
+      display: flex;
+      gap: 4px;
+      margin-top: 6px;
+    }
+    .pw-bar {
+      flex: 1;
+      height: 3px;
+      border-radius: 99px;
+      background: var(--bg-elevated);
+      transition: background 0.3s;
+    }
+    .pw-label { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+
+    /* Error / success text */
+    .field-error   { font-size: 0.75rem; color: var(--clr-danger); margin-top: 2px; min-height: 16px; }
+    .field-success { font-size: 0.75rem; color: var(--clr-primary); margin-top: 2px; }
+
+    /* Global form error */
+    .form-error {
+      padding: 12px 16px;
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      color: #F87171;
+      display: none;
+      animation: fadeIn 0.2s ease;
+    }
+    .form-error.show { display: block; }
+
+    /* Submit button */
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--clr-primary), #00A87A);
+      color: #000;
+      border: none;
+      border-radius: var(--radius-full);
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.25s;
+      box-shadow: 0 4px 20px var(--clr-primary-glow);
+      position: relative;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    .btn-submit:hover { box-shadow: 0 6px 28px rgba(0,200,150,0.5); transform: translateY(-1px); }
+    .btn-submit:active { transform: translateY(0) scale(0.98); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-submit .btn-spinner {
+      display: none;
+      width: 18px; height: 18px;
+      border: 2px solid rgba(0,0,0,0.3);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin: 0 auto;
+    }
+    .btn-submit.loading .btn-text { display: none; }
+    .btn-submit.loading .btn-spinner { display: block; }
+
+    /* Demo account */
+    .demo-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: rgba(245,158,11,0.06);
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .demo-bar:hover { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.4); }
+    .demo-bar-icon { font-size: 1.2rem; }
+    .demo-bar-text { flex: 1; }
+    .demo-bar-title { font-size: 0.875rem; font-weight: 600; color: #FBBF24; }
+    .demo-bar-sub   { font-size: 0.75rem; color: var(--text-muted); }
+    .demo-bar-arrow { color: #FBBF24; font-size: 0.9rem; }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-subtle);
+    }
+
+    /* Footer note */
+    .auth-footer { text-align: center; margin-top: 20px; font-size: 0.8125rem; color: var(--text-muted); }
+    .auth-footer a { color: var(--clr-primary); text-decoration: none; }
+    .auth-footer a:hover { text-decoration: underline; }
+
+    /* Checkboxes */
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+    }
+    .check-row input[type="checkbox"] {
+      width: 16px; height: 16px;
+      accent-color: var(--clr-primary);
+      flex-shrink: 0;
+      margin-top: 1px;
+      cursor: pointer;
+    }
+
+    /* Forget password */
+    .forgot-link {
+      font-size: 0.8125rem;
+      color: var(--clr-primary);
+      text-align: right;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .forgot-link:hover { opacity: 0.75; }
+
+    /* Animations */
+    @keyframes fadeIn   { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+    @keyframes spin     { to { transform: rotate(360deg); } }
+    @keyframes float    { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+    .fade-in { animation: fadeIn 0.4s ease both; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      body { grid-template-columns: 1fr; }
+      .panel-left { display: none; }
+      .panel-right { min-height: 100vh; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Left Visual Panel ── -->
+<section class="panel-left">
+  <canvas id="left-canvas"></canvas>
+
+  <div class="panel-left-content">
+    <div class="brand-logo">
+      <div class="brand-icon">🌿</div>
+      <div class="brand-name">Eco<span>Quest</span></div>
+    </div>
+
+    <h1 class="tagline">Learn. Act.<br>Save the Planet.</h1>
+    <p class="tagline-sub">
+      Join 12,400+ students turning environmental knowledge into real-world action through gamified learning.
+    </p>
+
+    <div class="feature-pills">
+      <div class="pill">
+        <div class="pill-icon green">📝</div>
+        <div><strong style="color:var(--text-primary)">Gamified Quizzes</strong> — Earn XP for every correct answer</div>
+      </div>
+      <div class="pill">
+        <div class="pill-icon purple">🌍</div>
+        <div><strong style="color:var(--text-primary)">Eco Missions</strong> — Real-world challenges with photo proof</div>
+      </div>
+      <div class="pill">
+        <div class="pill-icon gold">🏆</div>
+        <div><strong style="color:var(--text-primary)">Leaderboard</strong> — Compete globally and in your school</div>
+      </div>
+      <div class="pill">
+        <div class="pill-icon green">🤖</div>
+        <div><strong style="color:var(--text-primary)">AI Eco Advisor</strong> — Personalized sustainability tips</div>
+      </div>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-val">12K+</div>
+        <div class="stat-lbl">Students</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-val">48T</div>
+        <div class="stat-lbl">CO₂ Saved</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-val">94K</div>
+        <div class="stat-lbl">Missions Done</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-val">320+</div>
+        <div class="stat-lbl">Schools</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Right Auth Panel ── -->
+<section class="panel-right">
+  <div class="auth-box fade-in">
+
+    <div class="auth-header">
+      <h2 class="auth-title" id="auth-title">Welcome back 👋</h2>
+      <p class="auth-subtitle" id="auth-subtitle">Sign in to continue your EcoQuest journey</p>
+    </div>
+
+    <!-- Tab switcher -->
+    <div class="auth-tabs" role="tablist" aria-label="Authentication mode">
+      <button class="auth-tab active" id="tab-login"  onclick="switchTab('login')"  role="tab">Sign In</button>
+      <button class="auth-tab"        id="tab-signup" onclick="switchTab('signup')" role="tab">Create Account</button>
+    </div>
+
+    <!-- Global error -->
+    <div class="form-error" id="form-error" role="alert"></div>
+
+    <!-- ═══ LOGIN FORM ═══ -->
+    <form class="auth-form" id="login-form" novalidate>
+
+      <!-- Google Sign-In -->
+      <button type="button" id="google-login-btn" onclick="signInGoogle()" style="
+        width:100%;padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:10px;
+        background:var(--bg-elevated);border:1px solid var(--border-default);border-radius:var(--radius-full);
+        color:var(--text-primary);font-family:var(--font-sans);font-size:0.9375rem;font-weight:600;
+        cursor:pointer;transition:all 0.25s;
+      " onmouseover="this.style.borderColor='var(--clr-primary)';this.style.background='var(--clr-primary-dim)'" onmouseout="this.style.borderColor='var(--border-default)';this.style.background='var(--bg-elevated)'">
+        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        <span>Continue with Google</span>
+      </button>
+
+      <div class="divider">or sign in with email</div>
+
+      <!-- Demo account shortcut -->
+      <div class="demo-bar" id="demo-bar" onclick="loginDemo()">
+        <div class="demo-bar-icon">⚡</div>
+        <div class="demo-bar-text">
+          <div class="demo-bar-title">Try Demo Account</div>
+          <div class="demo-bar-sub">demo@ecoquest.io &nbsp;·&nbsp; password: eco123</div>
+        </div>
+        <div class="demo-bar-arrow">→</div>
+      </div>
+
+      <!-- Email -->
+      <div class="field-group">
+        <label class="field-label" for="login-email">Email Address</label>
+        <div class="field-wrap">
+          <span class="field-icon">✉️</span>
+          <input class="field-input" type="email" id="login-email" name="email" placeholder="you@example.com" autocomplete="email" required>
+        </div>
+        <div class="field-error" id="login-email-err"></div>
+      </div>
+
+      <!-- Password -->
+      <div class="field-group">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <label class="field-label" for="login-password">Password</label>
+          <a href="#" class="forgot-link" onclick="showForgot(event)">Forgot password?</a>
+        </div>
+        <div class="field-wrap">
+          <span class="field-icon">🔒</span>
+          <input class="field-input" type="password" id="login-password" name="password" placeholder="Enter your password" autocomplete="current-password" required>
+          <button type="button" class="eye-toggle" onclick="toggleEye('login-password', this)" aria-label="Show password">👁</button>
+        </div>
+        <div class="field-error" id="login-password-err"></div>
+      </div>
+
+      <!-- Remember me -->
+      <label class="check-row">
+        <input type="checkbox" id="remember-me">
+        <span>Keep me signed in on this device</span>
+      </label>
+
+      <button class="btn-submit" type="submit" id="login-btn">
+        <span class="btn-text">Sign In →</span>
+        <span class="btn-spinner"></span>
+      </button>
+
+      <p class="auth-footer">Don't have an account? <a href="#" onclick="switchTab('signup')">Create one free →</a></p>
+    </form>
+
+    <!-- ═══ SIGNUP FORM ═══ -->
+    <form class="auth-form hidden" id="signup-form" novalidate>
+
+      <!-- Google Sign-Up -->
+      <button type="button" onclick="signInGoogle()" style="
+        width:100%;padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:10px;
+        background:var(--bg-elevated);border:1px solid var(--border-default);border-radius:var(--radius-full);
+        color:var(--text-primary);font-family:var(--font-sans);font-size:0.9375rem;font-weight:600;
+        cursor:pointer;transition:all 0.25s;
+      " onmouseover="this.style.borderColor='var(--clr-primary)';this.style.background='var(--clr-primary-dim)'" onmouseout="this.style.borderColor='var(--border-default)';this.style.background='var(--bg-elevated)'">
+        <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+        <span>Continue with Google</span>
+      </button>
+
+      <div class="divider">or sign up with email</div>
+
+      <!-- Full name -->
+      <div class="field-group">
+        <label class="field-label" for="reg-name">Full Name</label>
+        <div class="field-wrap">
+          <span class="field-icon">👤</span>
+          <input class="field-input" type="text" id="reg-name" name="name" placeholder="Your full name" autocomplete="name" required>
+        </div>
+        <div class="field-error" id="reg-name-err"></div>
+      </div>
+
+      <!-- Email -->
+      <div class="field-group">
+        <label class="field-label" for="reg-email">Email Address</label>
+        <div class="field-wrap">
+          <span class="field-icon">✉️</span>
+          <input class="field-input" type="email" id="reg-email" name="email" placeholder="you@example.com" autocomplete="email" required>
+        </div>
+        <div class="field-error" id="reg-email-err"></div>
+      </div>
+
+      <!-- Password -->
+      <div class="field-group">
+        <label class="field-label" for="reg-password">Password</label>
+        <div class="field-wrap">
+          <span class="field-icon">🔒</span>
+          <input class="field-input" type="password" id="reg-password" name="password" placeholder="Create a strong password" autocomplete="new-password" required id="reg-password">
+          <button type="button" class="eye-toggle" onclick="toggleEye('reg-password', this)" aria-label="Show password">👁</button>
+        </div>
+        <!-- Strength meter -->
+        <div class="pw-strength" id="pw-bars">
+          <div class="pw-bar" id="bar-1"></div>
+          <div class="pw-bar" id="bar-2"></div>
+          <div class="pw-bar" id="bar-3"></div>
+          <div class="pw-bar" id="bar-4"></div>
+        </div>
+        <div class="pw-label" id="pw-label">Enter a password</div>
+        <div class="field-error" id="reg-password-err"></div>
+      </div>
+
+      <!-- Terms -->
+      <label class="check-row">
+        <input type="checkbox" id="agree-terms" required>
+        <span>I agree to the <a href="#" style="color:var(--clr-primary);text-decoration:none">Terms of Service</a> and <a href="#" style="color:var(--clr-primary);text-decoration:none">Privacy Policy</a></span>
+      </label>
+
+      <button class="btn-submit" type="submit" id="signup-btn">
+        <span class="btn-text">Create Account 🌱</span>
+        <span class="btn-spinner"></span>
+      </button>
+
+      <p class="auth-footer">Already have an account? <a href="#" onclick="switchTab('login')">Sign in →</a></p>
+    </form>
+
+  </div>
+</section>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="auth.js"></script>
+<script>
+  // Redirect if already logged in
+  if (Auth.isLoggedIn()) window.location.href = 'dashboard.html';
+
+  /* ── Tab Switching ── */
+  function switchTab(tab) {
+    const isLogin = tab === 'login';
+    document.getElementById('tab-login').classList.toggle('active', isLogin);
+    document.getElementById('tab-signup').classList.toggle('active', !isLogin);
+    document.getElementById('login-form').classList.toggle('hidden', !isLogin);
+    document.getElementById('signup-form').classList.toggle('hidden', isLogin);
+    document.getElementById('auth-title').textContent    = isLogin ? 'Welcome back 👋' : 'Join EcoQuest 🌱';
+    document.getElementById('auth-subtitle').textContent = isLogin
+      ? 'Sign in to continue your EcoQuest journey'
+      : 'Create a free account and start making an impact';
+    clearErrors();
+  }
+
+  /* ── Eye toggle ── */
+  function toggleEye(inputId, btn) {
+    const inp = document.getElementById(inputId);
+    const show = inp.type === 'password';
+    inp.type = show ? 'text' : 'password';
+    btn.textContent = show ? '🙈' : '👁';
+  }
+
+  /* ── Password strength ── */
+  document.getElementById('reg-password').addEventListener('input', function() {
+    const val = this.value;
+    const bars = [document.getElementById('bar-1'), document.getElementById('bar-2'), document.getElementById('bar-3'), document.getElementById('bar-4')];
+    const label = document.getElementById('pw-label');
+    bars.forEach(b => { b.style.background = 'var(--bg-elevated)'; });
+
+    let strength = 0;
+    if (val.length >= 6)                            strength++;
+    if (val.length >= 10)                           strength++;
+    if (/[A-Z]/.test(val) && /[0-9]/.test(val))   strength++;
+    if (/[^A-Za-z0-9]/.test(val))                  strength++;
+
+    const colors  = ['#EF4444', '#F59E0B', '#3B82F6', '#00C896'];
+    const labels  = ['Weak', 'Fair', 'Good', 'Strong'];
+    for (let i = 0; i < strength; i++) bars[i].style.background = colors[strength - 1];
+    label.textContent   = val ? labels[Math.max(0, strength - 1)] : 'Enter a password';
+    label.style.color   = val ? colors[Math.max(0, strength - 1)] : 'var(--text-muted)';
+  });
+
+  /* ── Form Errors ── */
+  function clearErrors() {
+    document.getElementById('form-error').classList.remove('show');
+    document.querySelectorAll('.field-error').forEach(el => el.textContent = '');
+    document.querySelectorAll('.field-input').forEach(el => { el.classList.remove('error', 'success'); });
+  }
+
+  function showFormError(msg) {
+    const el = document.getElementById('form-error');
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+
+  function setFieldError(fieldId, errId, msg) {
+    const inp = document.getElementById(fieldId);
+    const err = document.getElementById(errId);
+    if (inp) inp.classList.add('error');
+    if (err) err.textContent = msg;
+  }
+
+  /* ── Google Sign-In ── */
+  async function signInGoogle() {
+    clearErrors();
+    const res = await Auth.signInWithGoogle();
+    if (res.ok) {
+      window.location.href = 'dashboard.html';
+    } else {
+      showFormError(res.error);
+    }
+  }
+
+  /* ── Demo Login ── */
+  async function loginDemo() {
+    setLoading('login-btn', true);
+    const res = await Auth.login('demo@ecoquest.io', 'eco123');
+    if (res.ok) {
+      window.location.href = 'dashboard.html';
+    } else {
+      setLoading('login-btn', false);
+      showFormError(res.error);
+    }
+  }
+
+  /* ── Loading State ── */
+  function setLoading(btnId, loading) {
+    const btn = document.getElementById(btnId);
+    btn.classList.toggle('loading', loading);
+    btn.disabled = loading;
+  }
+
+  /* ── LOGIN Submit ── */
+  document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearErrors();
+
+    const email    = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    let valid = true;
+
+    if (!email) { setFieldError('login-email', 'login-email-err', 'Email is required.'); valid = false; }
+    else if (!email.includes('@')) { setFieldError('login-email', 'login-email-err', 'Enter a valid email.'); valid = false; }
+    if (!password) { setFieldError('login-password', 'login-password-err', 'Password is required.'); valid = false; }
+    if (!valid) return;
+
+    setLoading('login-btn', true);
+    const res = await Auth.login(email, password);
+    if (res.ok) {
+      window.location.href = 'dashboard.html';
+    } else {
+      setLoading('login-btn', false);
+      showFormError('❌ ' + res.error);
+      setFieldError('login-email', 'login-email-err', '');
+      document.getElementById('login-email').classList.add('error');
+      document.getElementById('login-password').classList.add('error');
+    }
+  });
+
+  /* ── SIGNUP Submit ── */
+  document.getElementById('signup-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    clearErrors();
+
+    const name     = document.getElementById('reg-name').value.trim();
+    const email    = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const agreed   = document.getElementById('agree-terms').checked;
+    let valid = true;
+
+    if (!name || name.length < 2)  { setFieldError('reg-name',     'reg-name-err',     'Name must be at least 2 characters.'); valid = false; }
+    if (!email || !email.includes('@')) { setFieldError('reg-email', 'reg-email-err', 'Enter a valid email address.'); valid = false; }
+    if (!password || password.length < 6) { setFieldError('reg-password', 'reg-password-err', 'Password must be at least 6 characters.'); valid = false; }
+    if (!agreed) { showFormError('Please agree to the Terms of Service to continue.'); valid = false; }
+    if (!valid) return;
+
+    setLoading('signup-btn', true);
+    const res = await Auth.register(name, email, password);
+    if (res.ok) {
+      window.location.href = 'dashboard.html';
+    } else {
+      setLoading('signup-btn', false);
+      showFormError('❌ ' + res.error);
+      if (res.error.includes('email')) setFieldError('reg-email', 'reg-email-err', res.error);
+    }
+  });
+
+  /* ── Forgot password prompt ── */
+  function showForgot(e) {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value.trim();
+    if (!email) {
+      setFieldError('login-email', 'login-email-err', 'Enter your email first, then click Forgot password.');
+      return;
+    }
+    // Simulate email sent
+    const el = document.getElementById('form-error');
+    el.style.background = 'rgba(0,200,150,0.08)';
+    el.style.borderColor = 'rgba(0,200,150,0.2)';
+    el.style.color = 'var(--clr-primary)';
+    el.textContent = '✓ Password reset instructions sent to ' + email;
+    el.classList.add('show');
+  }
+
+  /* ── Canvas Particle Background ── */
+  (function() {
+    const canvas = document.getElementById('left-canvas');
+    const ctx    = canvas.getContext('2d');
+    const symbols = ['🌿', '🍃', '🌱', '⭐', '✨', '💚', '🌍'];
+    let W, H, particles;
+
+    function resize() {
+      W = canvas.width  = canvas.offsetWidth;
+      H = canvas.height = canvas.offsetHeight;
+    }
+
+    function mkParticle(randomY) {
+      return {
+        x: Math.random() * W,
+        y: randomY ? Math.random() * H : H + 20,
+        size: 10 + Math.random() * 14,
+        sym: symbols[Math.floor(Math.random() * symbols.length)],
+        vy: -(0.2 + Math.random() * 0.25),
+        vx: (Math.random() - 0.5) * 0.2,
+        rot: Math.random() * Math.PI * 2,
+        rs:  (Math.random() - 0.5) * 0.015,
+        op:  0.08 + Math.random() * 0.22,
+        life: 0,
+        osc: Math.random() * Math.PI * 2,
+        oscS: 0.004 + Math.random() * 0.008,
+      };
+    }
+
+    function init() {
+      resize();
+      particles = Array.from({ length: 28 }, () => mkParticle(true));
+    }
+
+    function loop(t) {
+      ctx.clearRect(0, 0, W, H);
+      particles.forEach((p, i) => {
+        p.x += p.vx + Math.sin(t * p.oscS + p.osc) * 0.3;
+        p.y += p.vy;
+        p.rot += p.rs;
+        p.life++;
+        if (p.y < -30) particles[i] = mkParticle(false);
+        ctx.save();
+        ctx.globalAlpha = p.op;
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.font = `${p.size}px serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(p.sym, 0, 0);
+        ctx.restore();
+      });
+      requestAnimationFrame(loop);
+    }
+
+    window.addEventListener('resize', resize);
+    init();
+    requestAnimationFrame(loop);
+  })();
+</script>
+</body>
+</html>

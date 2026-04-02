@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Courses – EcoQuest</title>
+  <meta name="description" content="Learn the science behind environmental action with EcoQuest video courses.">
+  <link rel="stylesheet" href="main.css">
+  <link rel="stylesheet" href="components.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo"><div class="nav-logo-icon">🌿</div>Eco<span>Quest</span></a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">🏠 Home</a>
+      <a href="dashboard.html" class="nav-link">📊 Dashboard</a>
+      <a href="quizzes.html" class="nav-link">📝 Quizzes</a>
+      <a href="missions.html" class="nav-link">🌍 Missions</a>
+      <a href="leaderboard.html" class="nav-link">🏆 Leaderboard</a>
+      <a href="badges.html" class="nav-link">🏅 Badges</a>
+      <a href="recommendations.html" class="nav-link">🤖 AI Tips</a>
+      <a href="game.html" class="nav-link" style="color:var(--clr-gold);border:1px solid rgba(245,158,11,0.25);border-radius:var(--radius-full);padding:6px 14px">🎮 Game</a>
+    </div>
+    <div class="nav-right">
+      <div class="nav-xp-area">
+        <div class="nav-xp-label"><span id="nav-xp-val">720 XP</span><span id="nav-xp-next">to Tree</span></div>
+        <div class="nav-xp-bar"><div class="nav-xp-fill" id="nav-xp-fill" style="width:40%"></div></div>
+      </div>
+      <div class="nav-level-badge"><span id="nav-level-name">🌿 Sprout</span></div>
+      <div class="nav-avatar">EW</div>
+      <button onclick="Auth.logout()" title="Logout" style="background:transparent;border:1px solid var(--border-subtle);border-radius:var(--radius-full);padding:6px 12px;color:var(--text-muted);font-size:0.75rem;cursor:pointer;transition:all 0.2s;font-family:var(--font-sans)" onmouseover="this.style.color='var(--clr-danger)';this.style.borderColor='var(--clr-danger)'" onmouseout="this.style.color='var(--text-muted)';this.style.borderColor='var(--border-subtle)'">⏻ Logout</button>
+    </div>
+    <button class="nav-hamburger" id="nav-hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="mobile-nav-overlay" id="mobile-nav-overlay"></div>
+<div class="mobile-nav-drawer" id="mobile-nav-drawer">
+  <a href="index.html" class="nav-logo"><div class="nav-logo-icon">🌿</div>Eco<span style="color:var(--clr-primary)">Quest</span></a>
+  <div class="mobile-nav-links">
+    <a href="index.html" class="mobile-nav-link">🏠 Home</a>
+    <a href="dashboard.html" class="mobile-nav-link">📊 Dashboard</a>
+    <a href="quizzes.html" class="mobile-nav-link">📝 Quizzes</a>
+    <a href="missions.html" class="mobile-nav-link">🌍 Missions</a>
+    <a href="leaderboard.html" class="mobile-nav-link">🏆 Leaderboard</a>
+    <a href="badges.html" class="mobile-nav-link">🏅 Badges</a>
+    <a href="recommendations.html" class="mobile-nav-link">🤖 AI Tips</a>
+    <a href="game.html" class="mobile-nav-link" style="color:var(--clr-gold)">🎮 Game</a>
+  </div>
+</div>
+
+<div class="page-wrapper">
+  <div class="container">
+
+    <div style="background: url('images/course_hero.png') center/cover; border-radius: var(--radius-lg); margin-bottom: 32px; color: white; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" class="anim-fade-up">
+      <!-- Dark overlay to ensure text is readable -->
+      <div style="position: absolute; inset: 0; background: linear-gradient(to right, rgba(6,17,10,0.95) 0%, rgba(6,17,10,0.6) 50%, rgba(6,17,10,0.2) 100%);"></div>
+      
+      <!-- Content Wrapper -->
+      <div style="position: relative; z-index: 1; padding: 48px 40px;">
+        <div style="display: inline-flex; align-items: center; gap: 8px; margin-bottom: 16px; background: rgba(0,200,150,0.2); border: 1px solid rgba(0,200,150,0.4); padding: 4px 12px; border-radius: 30px; font-size: 0.75rem; font-weight: 700; color: #4ade80; text-transform: uppercase; letter-spacing: 1px; backdrop-filter: blur(4px);">
+          <span>✨</span> Premium Masterclasses
+        </div>
+        
+        <h1 style="font-family: var(--font-display); font-size: 3rem; font-weight: 900; margin-bottom: 12px; line-height: 1.1; text-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+          EcoQuest <span style="background: linear-gradient(135deg, #4ade80, #0284c7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0px 0px 8px rgba(74,222,128,0.4));">Academy</span>
+        </h1>
+        
+        <p style="font-size: 1.15rem; color: rgba(255,255,255,0.85); max-width: 550px; margin-bottom: 32px; line-height: 1.6; text-shadow: 0 2px 10px rgba(0,0,0,0.5);">
+          Deep dive into the science of environmental preservation with our premium video courses. Watch, learn, and earn huge XP rewards.
+        </p>
+        
+        <div class="flex gap-md items-center flex-wrap">
+          <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 8px 16px; border-radius: var(--radius-full); font-size: 0.875rem; font-weight: 600; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            <span style="font-size: 1.1rem; filter: drop-shadow(0 0 5px rgba(245,158,11,0.8));">⚡</span> +100 XP per course
+          </div>
+          <div style="background: rgba(0,200,150,0.2); backdrop-filter: blur(12px); border: 1px solid rgba(0,200,150,0.5); color: #4ade80; padding: 8px 16px; border-radius: var(--radius-full); font-size: 0.875rem; font-weight: 600; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,200,150,0.2);">
+            <span>▶️</span> Watch & Learn
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="grid-4 gap-md" style="margin-bottom:32px">
+      <div class="stat-card anim-fade-up">
+        <div class="stat-icon">📚</div>
+        <div class="stat-value">0</div>
+        <div class="stat-label">Courses Watched</div>
+      </div>
+      <div class="stat-card anim-fade-up anim-delay-1">
+        <div class="stat-icon" style="background:rgba(245,158,11,0.12)">⏱</div>
+        <div class="stat-value">0<span style="font-size:1rem">m</span></div>
+        <div class="stat-label">Learning Time</div>
+      </div>
+      <div class="stat-card anim-fade-up anim-delay-2">
+        <div class="stat-icon">🚀</div>
+        <div class="stat-value">5</div>
+        <div class="stat-label">Available Courses</div>
+      </div>
+    </div>
+
+    <!-- Course Cards -->
+    <div class="grid-3 gap-lg" id="course-list">
+
+      <div class="quiz-category-card anim-fade-up" onclick="openCourse('climate')">
+        <div style="height: 180px; background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.8) 100%), url('images/course_climate.png') center/cover; border-radius: var(--radius-md) var(--radius-md) 0 0; margin: -24px -24px 16px -24px; position: relative;">
+          <div style="position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🌡️</div>
+          <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.7); color: white; border-radius: 4px; padding: 2px 6px; font-size: 0.75rem; font-weight: bold; backdrop-filter: blur(4px);">12:05</div>
+        </div>
+        <div class="quiz-cat-title">Climate Change 101</div>
+        <div class="quiz-cat-count">Understanding greenhouse gases and global warming.</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px">
+          <div class="badge badge-green">Beginner</div>
+          <span style="color:var(--clr-primary); font-size:0.875rem; font-weight:700">Watch Now →</span>
+        </div>
+      </div>
+
+      <div class="quiz-category-card anim-fade-up anim-delay-1" onclick="openCourse('energy')">
+        <div style="height: 180px; background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.8) 100%), url('images/course_energy.png') center/cover; border-radius: var(--radius-md) var(--radius-md) 0 0; margin: -24px -24px 16px -24px; position: relative;">
+          <div style="position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">⚡</div>
+          <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.7); color: white; border-radius: 4px; padding: 2px 6px; font-size: 0.75rem; font-weight: bold; backdrop-filter: blur(4px);">15:30</div>
+        </div>
+        <div class="quiz-cat-title">Renewable Energy</div>
+        <div class="quiz-cat-count">How solar, wind, and hydro power the future.</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px">
+          <div class="badge badge-green">Beginner</div>
+          <span style="color:var(--clr-primary); font-size:0.875rem; font-weight:700">Watch Now →</span>
+        </div>
+      </div>
+
+      <div class="quiz-category-card anim-fade-up anim-delay-2" onclick="openCourse('biodiversity')">
+        <div style="height: 180px; background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.8) 100%), url('images/course_biodiversity.png') center/cover; border-radius: var(--radius-md) var(--radius-md) 0 0; margin: -24px -24px 16px -24px; position: relative;">
+          <div style="position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🦋</div>
+          <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.7); color: white; border-radius: 4px; padding: 2px 6px; font-size: 0.75rem; font-weight: bold; backdrop-filter: blur(4px);">08:45</div>
+        </div>
+        <div class="quiz-cat-title">Protecting Biodiversity</div>
+        <div class="quiz-cat-count">Why every species matters in an ecosystem.</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px">
+          <div class="badge" style="background:var(--clr-accent-dim);color:var(--text-primary)">Intermediate</div>
+          <span style="color:var(--clr-primary); font-size:0.875rem; font-weight:700">Watch Now →</span>
+        </div>
+      </div>
+
+      <div class="quiz-category-card anim-fade-up" onclick="openCourse('waste')">
+        <div style="height: 180px; background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.8) 100%), url('images/course_waste.png') center/cover; border-radius: var(--radius-md) var(--radius-md) 0 0; margin: -24px -24px 16px -24px; position: relative;">
+          <div style="position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">♻️</div>
+          <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.7); color: white; border-radius: 4px; padding: 2px 6px; font-size: 0.75rem; font-weight: bold; backdrop-filter: blur(4px);">10:20</div>
+        </div>
+        <div class="quiz-cat-title">Waste & Circular Economy</div>
+        <div class="quiz-cat-count">Reduce, reuse, recycle, and the future of materials.</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px">
+          <div class="badge badge-green">Beginner</div>
+          <span style="color:var(--clr-primary); font-size:0.875rem; font-weight:700">Watch Now →</span>
+        </div>
+      </div>
+
+      <div class="quiz-category-card anim-fade-up anim-delay-1" onclick="openCourse('ocean')">
+        <div style="height: 180px; background: linear-gradient(to bottom, rgba(0,0,0,0) 40%, rgba(0,0,0,0.8) 100%), url('images/course_ocean.png') center/cover; border-radius: var(--radius-md) var(--radius-md) 0 0; margin: -24px -24px 16px -24px; position: relative;">
+          <div style="position: absolute; top: 12px; left: 12px; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px); webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.1); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;">🌊</div>
+          <div style="position: absolute; bottom: 8px; right: 8px; background: rgba(0,0,0,0.7); color: white; border-radius: 4px; padding: 2px 6px; font-size: 0.75rem; font-weight: bold; backdrop-filter: blur(4px);">14:10</div>
+        </div>
+        <div class="quiz-cat-title">Ocean Conservation</div>
+        <div class="quiz-cat-count">Marine life, coral reefs, and plastic pollution.</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px">
+          <div class="badge" style="background:var(--clr-accent-dim);color:var(--text-primary)">Intermediate</div>
+          <span style="color:var(--clr-primary); font-size:0.875rem; font-weight:700">Watch Now →</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- COURSE VIDEO MODAL -->
+<div class="modal-overlay hidden" id="course-modal">
+  <div class="modal-box" style="max-width:800px; padding: 0;">
+    <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; border-bottom: 1px solid var(--border-subtle);">
+      <div id="course-modal-title" style="font-weight: 700; font-size: 1.25rem;">Course Title</div>
+      <button class="modal-close" id="course-close" style="background:var(--bg-elevated)">&times;</button>
+    </div>
+    
+    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; background: #000;">
+      <!-- PLACEHOLDER FOR YOUTUBE IFRAME -->
+      <!-- The user will replace the src with actual YouTube links -->
+      <iframe id="course-video-iframe" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    
+    <div style="padding: 24px;">
+      <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 8px;">Course Summary</h3>
+      <div style="font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.5;" id="course-modal-desc">
+        Watch this video to learn the fundamentals of this topic. When you drop in your YouTube URL here, it will automatically play!
+      </div>
+      
+      <div style="background: var(--bg-elevated); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px; margin-bottom: 24px;">
+        <h4 style="font-size: 0.85rem; font-weight: 700; color: var(--clr-primary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Key Takeaways</h4>
+        <ul id="course-modal-bullets" style="font-size: 0.9rem; color: var(--text-secondary); padding-left: 20px; line-height: 1.6; margin: 0;">
+          <!-- Bullets injected via JS -->
+        </ul>
+      </div>
+
+      <div style="display: flex; gap: 16px; justify-content: space-between; align-items: center;">
+        <button class="btn btn-primary" onclick="markCourseComplete()">✓ Mark as Completed (+100 XP)</button>
+        <a href="quizzes.html" class="btn btn-secondary">Take Quiz on this Topic →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="auth.js"></script>
+<script src="app.js"></script>
+<script>Auth.guard();</script>
+<script>
+  const COURSE_DATA = {
+    climate: {
+      title: 'Climate Change 101',
+      desc: 'Learn about the greenhouse effect, historical temperature trends, and how human activities are accelerating global warming. A great foundation before attempting the Climate Change Quiz!',
+      bullets: [
+        'Greenhouse gases trap heat in the atmosphere, warming the planet.',
+        'Human activities, especially burning fossil fuels, are the primary driver of rapid climate change.',
+        'Global temperatures have risen significantly since the industrial revolution, triggering extreme weather.'
+      ],
+      videoUrl: 'https://www.youtube.com/embed/ScX29WBJI3w'
+    },
+    energy: {
+      title: 'Renewable Energy',
+      desc: 'Discover the mechanics of solar panels, wind turbines, and geothermal plants. Learn how transitioning away from fossil fuels is critical for a sustainable future.',
+      bullets: [
+        'Renewable energy sources like solar and wind are inexhaustible and produce zero direct emissions.',
+        'The transition to green energy systems creates millions of jobs globally.',
+        'Energy storage and modern grid infrastructure are as important as the power generation itself.'
+      ],
+      videoUrl: 'https://www.youtube.com/embed/1kUE0BZtTRc'
+    },
+    biodiversity: {
+      title: 'Protecting Biodiversity',
+      desc: 'Understand why ecosystems rely on a massive variety of species to survive, and how habitat loss and pollution are threatening global flora and fauna.',
+      bullets: [
+        'Biodiversity provides fundamental life support systems like clean air, water, and pollination.',
+        'Habitat loss and fragmentation are currently the greatest threats to species survival.',
+        'Reforestation and protected wildlife corridors help mitigate the loss and restore ecological balance.'
+      ],
+      videoUrl: 'https://www.youtube.com/embed/GK_vRtHJZu4'
+    },
+    waste: {
+      title: 'Waste & Circular Economy',
+      desc: 'Explore the journey of our trash, the immense problem of plastic pollution, and how a circular economy could revolutionize materials and manufacturing.',
+      bullets: [
+        'A circular economy aims to eliminate waste by keeping materials in use indefinitely.',
+        'Single-use plastics take hundreds of years to decompose, severely impacting marine and terrestrial life.',
+        'True sustainability requires reducing and reusing items, not just recycling.'
+      ],
+      videoUrl: 'https://www.youtube.com/embed/dz6qK_e1oEQ'
+    },
+    ocean: {
+      title: 'Ocean Conservation',
+      desc: 'Dive deeply into ocean acidification, coral bleaching, and overfishing. Find out why the oceans are Earth\'s most important carbon sink.',
+      bullets: [
+        'Oceans absorb roughly 25% of all CO2 emissions, acting as the ultimate global climate buffer.',
+        'Excess CO2 leads to ocean acidification, which is devastating to coral reefs and shell-building organisms.',
+        'Overfishing and destructive trawling practices severely disrupt the delicate balance of marine ecosystems.'
+      ],
+      videoUrl: 'https://www.youtube.com/embed/HQTUWK7CM-Y'
+    }
+  };
+
+  let activeCourseId = null;
+
+  function openCourse(id) {
+    const course = COURSE_DATA[id];
+    if (!course) return;
+    
+    activeCourseId = id;
+    document.getElementById('course-modal-title').textContent = course.title;
+    document.getElementById('course-modal-desc').textContent = course.desc;
+    
+    // Populate Key Takeaways
+    const bulletsHTML = course.bullets.map(b => `<li>${b}</li>`).join('');
+    document.getElementById('course-modal-bullets').innerHTML = bulletsHTML;
+    
+    // Set iframe SRC
+    // To avoid autoplaying constantly in the background, we only set the src when opened
+    document.getElementById('course-video-iframe').src = course.videoUrl;
+    
+    document.getElementById('course-modal').classList.remove('hidden');
+  }
+
+  function markCourseComplete() {
+    EQ.showToast('success', 'Course Completed!', 'You earned 100 XP for learning!');
+    EQ.awardXP(100, `Completed Course: ${COURSE_DATA[activeCourseId].title}`);
+    closeModal();
+  }
+
+  function closeModal() {
+    document.getElementById('course-modal').classList.add('hidden');
+    // Clear iframe src to stop video playing in background
+    document.getElementById('course-video-iframe').src = '';
+  }
+
+  document.getElementById('course-close').addEventListener('click', closeModal);
+  document.getElementById('course-modal').addEventListener('click', (e) => {
+    if (e.target === document.getElementById('course-modal')) closeModal();
+  });
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // You could initialize UI state here based on completed courses
+  });
+</script>
+</body>
+</html>
