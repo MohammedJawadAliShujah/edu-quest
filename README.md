@@ -62,4 +62,3 @@ Edu-Quest/
 * **[Mohammed Jawad Ali Shujah]** - *Backend Developer*
 * **[Shaik Abrar]** - *Frontend Developer*
 * **[Baqer Ali]** - *Lead developer*
-"""
